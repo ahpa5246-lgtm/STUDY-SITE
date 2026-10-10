@@ -1,3 +1,5 @@
+% Arabic typography repair: XeLaTeX + polyglossia + embedded Amiri.
+% Mixed-language headings are isolated; stable PDF is rendered from this source.
 %!TEX program = xelatex
 \documentclass[12pt,a4paper]{article}
 \usepackage[margin=21mm,top=25mm,bottom=23mm]{geometry}
@@ -30,9 +32,16 @@
 \setlength{\headheight}{17pt}
 \newcommand{\M}[1]{\begingroup\begin{LTR}\begin{equation*}#1\end{equation*}\end{LTR}\endgroup}
 \newcommand{\Q}[1]{\begingroup\small\begin{LTR}\begin{equation*}#1\end{equation*}\end{LTR}\endgroup}
-\newcommand{\Step}[2]{\Needspace{65pt}\vspace{8pt}{\arabicfontsf\bfseries\large\color{ink} #2}\par\vspace{2pt}\begin{LTR}\noindent{\color{accent}\footnotesize\sffamily STEP #1}\end{LTR}\noindent\textcolor{linecol}{\rule{\textwidth}{0.5pt}}\par}
-\newcommand{\Homework}[1]{\clearpage\vspace*{5pt}\begin{LTR}\noindent\textcolor{accent}{\rule{34mm}{2.2pt}}\\[7pt]{\sffamily\bfseries\Large Homework #1}\end{LTR}\vspace{4pt}\noindent{\LARGE\arabicfontsf\bfseries\color{ink}الحل بطريقة \textenglish{Mesh Analysis}}\par\vspace{3pt}}
-\newcommand{\Final}[1]{\par\vspace{9pt}\begin{tcolorbox}[colback=light,colframe=accent,boxrule=0.7pt,arc=2mm,left=12pt,right=12pt,top=11pt,bottom=9pt]\noindent{\large\bfseries\textcolor{accent}{\textenglish{Final Answer} — الجواب النهائي}}\par\M{\boxed{#1}}\end{tcolorbox}}
+\newcommand{\Step}[3]{%
+\Needspace{82pt}\par\vspace{9pt}%
+\noindent{\arabicfontsf\bfseries\large\color{ink}#2}\par
+\begin{LTR}\noindent{\color{accent}\footnotesize\sffamily\bfseries\textenglish{STEP #1 / #3}}\end{LTR}%
+\vspace{3pt}\noindent\textcolor{linecol}{\rule{\textwidth}{0.5pt}}\par}
+\newcommand{\Homework}[1]{\clearpage\vspace*{5pt}
+\begin{LTR}\noindent\textcolor{accent}{\rule{34mm}{2.2pt}}\\[7pt]{\sffamily\bfseries\Large\textenglish{Homework #1}}\end{LTR}
+\vspace{4pt}\noindent{\LARGE\arabicfontsf\bfseries\color{ink}الحل بطريقة تحليل تيارات الحلقات}\par
+\begin{LTR}\noindent{\color{muted}\normalsize\sffamily\textenglish{Mesh Analysis}}\end{LTR}\vspace{7pt}}
+\newcommand{\Final}[1]{\par\vspace{9pt}\begin{tcolorbox}[colback=light,colframe=accent,boxrule=0.7pt,arc=2mm,left=12pt,right=12pt,top=11pt,bottom=9pt]\noindent{\large\bfseries\textcolor{accent}{\textenglish{Final Answer} - الجواب النهائي}}\par\M{\boxed{#1}}\end{tcolorbox}}
 \newcommand{\Remember}[1]{\vspace{10pt}\noindent\textbf{للحفظ والفهم:} #1}
 \AtBeginDocument{\color{ink}}
 \begin{document}
@@ -41,7 +50,7 @@
 \begin{center}
 {\color{accent}\textenglish{CONTROL THEORY}\\[5pt]\textenglish{ELECTRICAL SYSTEMS}}\\[26pt]
 {\arabicfontsf\bfseries\fontsize{27}{41}\selectfont حل واجبات\\المحاضرة الاولى}\\[12pt]
-{\color{muted}\arabicfont\Large طريقة تيارات الحلقات — \textenglish{Mesh Analysis}}\\[14pt]
+{\color{muted}\arabicfont\Large طريقة تيارات الحلقات - \textenglish{Mesh Analysis}}\\[14pt]
 \begin{tikzpicture}\draw[accent,line width=1.2pt](-3.5,0)--(3.5,0);\fill[amber](0,0)circle(2pt);\end{tikzpicture}\\[21pt]
 {\textenglish{Homework 01 / 02 / 03}}\\[5pt]
 {\large الأسئلة بالعربية والإنجليزية، والحلول الرياضية خطوة بخطوة}
@@ -49,7 +58,7 @@
 \vfill
 \begin{tcolorbox}[colback=light,colframe=linecol,boxrule=.5pt,arc=2mm]
 \begin{center}
-\textbf{مادة نظرية السيطرة — المرحلة الثالثة}\\
+\textbf{مادة نظرية السيطرة - المرحلة الثالثة}\\
 \textenglish{Transfer Functions • Kirchhoff's Laws • Laplace Impedances}
 \end{center}
 \end{tcolorbox}
@@ -65,13 +74,16 @@ Find the transfer function \(\dfrac{V_o(s)}{V_i(s)}\) of the following network.
 المطلوب:
 \M{\boxed{G(s)=\frac{V_o(s)}{V_i(s)}}}
 \begin{center}
+\begin{LTR}
 \begin{circuitikz}[american,scale=.88,transform shape]
-\draw (0,0) to[sV,l=$V_i$] (0,3) to[L,l=$L_1$] (3.2,3) to[L,l=$L_2$,v^>=$V_o$] (6.4,3) to[C,l=$C$] (6.4,0)--(0,0);
+\draw (0,0) to[sV,l=$V_i$] (0,3) to[L,l=$L_1$] (3.2,3) to[L,l=$L_2$] (6.4,3) to[C,l=$C$] (6.4,0)--(0,0);
 \draw (3.2,3) to[R,l=$R$] (3.2,0);
 \node at (1.65,1.4) {$I_1$};\node at (4.82,1.4) {$I_2$};
+\node[above,accent] at (4.8,4.2) {$+\quad V_o\quad -$};
 \end{circuitikz}
+\end{LTR}
 \end{center}
-\Step{1}{تحديد تيارات الحلقات (\textenglish{Mesh Currents})}
+\Step{1}{تحديد تيارات الحلقات}{Mesh Currents}
 نفترض تيارين باتجاه عقارب الساعة:
 \begin{itemize}
 \item $I_1$: تيار الحلقة الأولى، التي تحتوي المصدر $V_i$، والمحث $L_1$، والمقاومة $R$.
@@ -79,12 +91,12 @@ Find the transfer function \(\dfrac{V_o(s)}{V_i(s)}\) of the following network.
 \end{itemize}
 المقاومة $R$ مشتركة بين الحلقتين، ولذلك تيارها باتجاه الحلقة الأولى:
 \M{\boxed{I_R=I_1-I_2}}
-\Step{2}{تحويل العناصر إلى ممانعات (\textenglish{Impedances})}
+\Step{2}{تحويل العناصر إلى ممانعات}{Impedances}
 \M{Z_{L_1}=L_1s\qquad Z_{L_2}=L_2s}
 \M{Z_R=R\qquad Z_C=\frac{1}{Cs}}
 نستخدم العلاقة:
 \M{\boxed{V=ZI}}
-\Step{3}{تطبيق \textenglish{KVL} على الحلقة الأولى (\textenglish{Mesh 1})}
+\Step{3}{تطبيق قانون كيرشوف للجهد على الحلقة الأولى}{KVL / Mesh 1}
 حسب قانون كيرشوف، جهد المصدر يساوي مجموع هبوط الجهد على المحث الأول والمقاومة:
 \M{V_i=V_{L_1}+V_R}
 نعوض:
@@ -93,7 +105,7 @@ Find the transfer function \(\dfrac{V_o(s)}{V_i(s)}\) of the following network.
 \M{V_i=L_1sI_1+RI_1-RI_2}
 نجمع حدود $I_1$:
 \M{\boxed{(L_1s+R)I_1-RI_2=V_i}\tag{1}}
-\Step{4}{تطبيق \textenglish{KVL} على الحلقة الثانية (\textenglish{Mesh 2})}
+\Step{4}{تطبيق قانون كيرشوف للجهد على الحلقة الثانية}{KVL / Mesh 2}
 الحلقة الثانية لا تحتوي مصدراً، لذلك:
 \M{V_R+V_{L_2}+V_C=0}
 نعوض:
@@ -103,7 +115,7 @@ Find the transfer function \(\dfrac{V_o(s)}{V_i(s)}\) of the following network.
 نجمع حدود $I_2$:
 \M{\boxed{-RI_1+\left(R+L_2s+\frac{1}{Cs}\right)I_2=0}\tag{2}}
 الآن لدينا معادلتان بمجهولين $I_1,I_2$.
-\Step{5}{حذف التيار $I_1$ (\textenglish{Elimination})}
+\Step{5}{حذف التيار $I_1$}{Elimination}
 من المعادلة (2):
 \M{-RI_1+\left(R+L_2s+\frac1{Cs}\right)I_2=0}
 ننقل الحد الذي يحتوي $I_1$:
@@ -121,7 +133,7 @@ Find the transfer function \(\dfrac{V_o(s)}{V_i(s)}\) of the following network.
 \Q{I_2=\frac{RV_i}{(L_1s+R)(R+L_2s+\frac1{Cs})-R^2}}
 نقسم على $V_i$:
 \Q{\boxed{\frac{I_2}{V_i}=\frac{R}{(L_1s+R)(R+L_2s+\frac1{Cs})-R^2}}\tag{3}}
-\Step{6}{إيجاد جهد الخرج (\textenglish{Output Voltage})}
+\Step{6}{إيجاد جهد الخرج}{Output Voltage}
 لأن الخرج مأخوذ على المحث الثاني $L_2$، والتيار المار فيه $I_2$:
 \M{V_o=Z_{L_2}I_2}
 \M{\boxed{V_o=L_2sI_2}\tag{4}}
@@ -131,7 +143,7 @@ Find the transfer function \(\dfrac{V_o(s)}{V_i(s)}\) of the following network.
 \Q{\frac{V_o}{V_i}=L_2s\frac{R}{(L_1s+R)(R+L_2s+\frac1{Cs})-R^2}}
 إذن:
 \Q{\boxed{\frac{V_o}{V_i}=\frac{RL_2s}{(L_1s+R)(R+L_2s+\frac1{Cs})-R^2}}}
-\Step{7}{تبسيط دالة الانتقال (\textenglish{Simplification})}
+\Step{7}{تبسيط دالة الانتقال}{Simplification}
 نفتح الأقواس في المقام:
 \Q{\begin{aligned}&(L_1s+R)\left(R+L_2s+\frac1{Cs}\right)-R^2\\&=L_1Rs+L_1L_2s^2+\frac{L_1}{C}\\&\quad+R^2+RL_2s+\frac{R}{Cs}-R^2\end{aligned}}
 نختصر $R^2-R^2$:
@@ -157,13 +169,15 @@ Find the transfer function \(\dfrac{E_o(s)}{E_i(s)}\) of the following network.
 تحتوي الدائرة على مقاومتين $R_1,R_2$ ومتسعتين $C_1,C_2$. المقاومة $R_2$ والمتسعة $C_2$ متصلتان على التوازي، بينما المقاومة $R_1$ والمتسعة $C_1$ متصلتان على التوالي في الفرع الأيمن.
 جهد الخرج مأخوذ على المتسعة $C_1$ فقط.
 \begin{center}
+\begin{LTR}
 \begin{circuitikz}[american,scale=.84,transform shape]
 \draw (0,0) to[sV,l=$E_i$] (0,3) --(1.2,3) --(1.2,4.2) to[R,l=$R_2$] (4.6,4.2) -- (4.6,3) -- (6,3) to[R,l=$R_1$] (6,1.6) to[C,l=$C_1$,v^>=$E_o$] (6,0) -- (0,0);
 \draw (1.2,3) to[C,l=$C_2$] (4.6,3);
 \node at (2.4,1.5) {$I_1$};\node at (3,3.72) {$I_2$};
 \end{circuitikz}
+\end{LTR}
 \end{center}
-\Step{1}{تحديد تيارات الحلقات (\textenglish{Mesh Currents})}
+\Step{1}{تحديد تيارات الحلقات}{Mesh Currents}
 نفترض تيارين باتجاه عقارب الساعة:
 \begin{itemize}
 \item $I_1$: تيار الحلقة السفلية، التي تحتوي المصدر $E_i$، والمتسعة $C_2$، والمقاومة $R_1$، والمتسعة $C_1$.
@@ -172,12 +186,12 @@ Find the transfer function \(\dfrac{E_o(s)}{E_i(s)}\) of the following network.
 المتسعة $C_2$ مشتركة بين الحلقتين، ولذلك تيارها باتجاه الحلقة الأولى:
 \M{\boxed{I_{C_2}=I_1-I_2}}
 أما المقاومة $R_1$ والمتسعة $C_1$، فيمر فيهما تيار الحلقة الأولى فقط $I_1$.
-\Step{2}{تحويل العناصر إلى ممانعات (\textenglish{Impedances})}
+\Step{2}{تحويل العناصر إلى ممانعات}{Impedances}
 \M{Z_{R_1}=R_1\qquad Z_{R_2}=R_2}
 \M{Z_{C_1}=\frac{1}{C_1s}\qquad Z_{C_2}=\frac{1}{C_2s}}
 نستخدم العلاقة:
 \M{\boxed{V=ZI}}
-\Step{3}{تطبيق \textenglish{KVL} على الحلقة الأولى (\textenglish{Mesh 1})}
+\Step{3}{تطبيق قانون كيرشوف للجهد على الحلقة الأولى}{KVL / Mesh 1}
 حسب قانون كيرشوف، جهد المصدر يساوي مجموع هبوط الجهد على المتسعة $C_2$، والمقاومة $R_1$، والمتسعة $C_1$:
 \M{E_i=V_{C_2}+V_{R_1}+V_{C_1}}
 نعوض:
@@ -186,7 +200,7 @@ Find the transfer function \(\dfrac{E_o(s)}{E_i(s)}\) of the following network.
 \M{E_i=\frac{I_1}{C_2s}-\frac{I_2}{C_2s}+R_1I_1+\frac{I_1}{C_1s}}
 نجمع حدود $I_1$:
 \Q{\boxed{\left(R_1+\frac{1}{C_1s}+\frac{1}{C_2s}\right)I_1-\frac{I_2}{C_2s}=E_i}\tag{1}}
-\Step{4}{تطبيق \textenglish{KVL} على الحلقة الثانية (\textenglish{Mesh 2})}
+\Step{4}{تطبيق قانون كيرشوف للجهد على الحلقة الثانية}{KVL / Mesh 2}
 الحلقة العلوية لا تحتوي مصدراً، لذلك:
 \M{V_{R_2}+V_{C_2}=0}
 نعوض:
@@ -196,7 +210,7 @@ Find the transfer function \(\dfrac{E_o(s)}{E_i(s)}\) of the following network.
 نجمع حدود $I_2$:
 \Q{\boxed{-\frac{I_1}{C_2s}+\left(R_2+\frac{1}{C_2s}\right)I_2=0}\tag{2}}
 الآن لدينا معادلتان بمجهولين $I_1,I_2$.
-\Step{5}{حذف التيار $I_2$ (\textenglish{Elimination})}
+\Step{5}{حذف التيار $I_2$}{Elimination}
 في هذا الواجب نريد في النهاية $I_1$، لأن جهد الخرج مأخوذ على المتسعة $C_1$، والتيار المار فيها هو $I_1$.
 من المعادلة (2):
 \M{-\frac{I_1}{C_2s}+\left(R_2+\frac{1}{C_2s}\right)I_2=0}
@@ -224,7 +238,7 @@ Find the transfer function \(\dfrac{E_o(s)}{E_i(s)}\) of the following network.
 \M{I_1=\frac{E_i}{R_1+\frac{1}{C_1s}+\frac{R_2}{R_2C_2s+1}}}
 نقسم على $E_i$:
 \Q{\boxed{\frac{I_1}{E_i}=\frac{1}{R_1+\frac{1}{C_1s}+\frac{R_2}{R_2C_2s+1}}}\tag{4}}
-\Step{6}{إيجاد جهد الخرج (\textenglish{Output Voltage})}
+\Step{6}{إيجاد جهد الخرج}{Output Voltage}
 لأن الخرج مأخوذ على المتسعة $C_1$، والتيار المار فيها $I_1$:
 \M{E_o=V_{C_1}}
 نستخدم قانون:
@@ -239,7 +253,7 @@ Find the transfer function \(\dfrac{E_o(s)}{E_i(s)}\) of the following network.
 \Q{\frac{E_o}{E_i}=\frac{1}{C_1s}\times\frac{1}{R_1+\frac{1}{C_1s}+\frac{R_2}{R_2C_2s+1}}}
 إذن:
 \Q{\boxed{\frac{E_o}{E_i}=\frac{\frac{1}{C_1s}}{R_1+\frac{1}{C_1s}+\frac{R_2}{R_2C_2s+1}}}}
-\Step{7}{تبسيط دالة الانتقال (\textenglish{Simplification})}
+\Step{7}{تبسيط دالة الانتقال}{Simplification}
 نضرب البسط والمقام في $C_1s$:
 \M{\frac{E_o}{E_i}=\frac{1}{R_1C_1s+1+\frac{R_2C_1s}{R_2C_2s+1}}}
 لإزالة الكسر الموجود في المقام، نضرب البسط والمقام في $R_2C_2s+1$:
@@ -264,13 +278,15 @@ Find the transfer function \(\dfrac{I_2(s)}{E_i(s)}\) of the following network.
 تحتوي الدائرة على مقاومتين $R_1,R_2$، ومحث $L$، ومتسعة $C$.
 لاحظ أن المطلوب هذه المرة هو نسبة تيار الحلقة الثانية $I_2$ إلى جهد الدخل $E_i$، وليس جهد الخرج إلى جهد الدخل.
 \begin{center}
+\begin{LTR}
 \begin{circuitikz}[american,scale=.87,transform shape]
 \draw (0,0) to[sV,l=$E_i$] (0,3) to[R,l=$R_1$] (3.2,3) to[R,l=$R_2$] (6.4,3) to[C,l=$C$] (6.4,0)--(0,0);
 \draw (3.2,3) to[L,l=$L$] (3.2,0);
 \node at (1.6,1.35) {$I_1$};\node at (4.85,1.35) {$I_2$};
 \end{circuitikz}
+\end{LTR}
 \end{center}
-\Step{1}{تحديد تيارات الحلقات (\textenglish{Mesh Currents})}
+\Step{1}{تحديد تيارات الحلقات}{Mesh Currents}
 نفترض تيارين باتجاه عقارب الساعة:
 \begin{itemize}
 \item $I_1$: تيار الحلقة الأولى، التي تحتوي المصدر $E_i$، والمقاومة $R_1$، والمحث $L$.
@@ -280,12 +296,12 @@ Find the transfer function \(\dfrac{I_2(s)}{E_i(s)}\) of the following network.
 \M{\boxed{I_L=I_1-I_2}}
 أما باتجاه الحلقة الثانية:
 \M{\boxed{I_L=I_2-I_1}}
-\Step{2}{تحويل العناصر إلى ممانعات (\textenglish{Impedances})}
+\Step{2}{تحويل العناصر إلى ممانعات}{Impedances}
 \M{Z_{R_1}=R_1\qquad Z_{R_2}=R_2}
 \M{Z_L=Ls\qquad Z_C=\frac{1}{Cs}}
 نستخدم العلاقة:
 \M{\boxed{V=ZI}}
-\Step{3}{تطبيق \textenglish{KVL} على الحلقة الأولى (\textenglish{Mesh 1})}
+\Step{3}{تطبيق قانون كيرشوف للجهد على الحلقة الأولى}{KVL / Mesh 1}
 حسب قانون كيرشوف، جهد المصدر يساوي مجموع هبوط الجهد على المقاومة الأولى والمحث:
 \M{E_i=V_{R_1}+V_L}
 نعوض:
@@ -294,7 +310,7 @@ Find the transfer function \(\dfrac{I_2(s)}{E_i(s)}\) of the following network.
 \M{E_i=R_1I_1+LsI_1-LsI_2}
 نجمع حدود $I_1$:
 \M{\boxed{(R_1+Ls)I_1-LsI_2=E_i}\tag{1}}
-\Step{4}{تطبيق \textenglish{KVL} على الحلقة الثانية (\textenglish{Mesh 2})}
+\Step{4}{تطبيق قانون كيرشوف للجهد على الحلقة الثانية}{KVL / Mesh 2}
 الحلقة الثانية لا تحتوي مصدراً، لذلك:
 \M{V_L+V_{R_2}+V_C=0}
 نعوض:
@@ -306,7 +322,7 @@ Find the transfer function \(\dfrac{I_2(s)}{E_i(s)}\) of the following network.
 نجمع حدود $I_2$:
 \Q{\boxed{-LsI_1+\left(Ls+R_2+\frac{1}{Cs}\right)I_2=0}\tag{2}}
 الآن لدينا معادلتان بمجهولين $I_1,I_2$.
-\Step{5}{حذف التيار $I_1$ (\textenglish{Elimination})}
+\Step{5}{حذف التيار $I_1$}{Elimination}
 نريد استخراج $I_2$، لذلك نحذف $I_1$.
 من المعادلة (2):
 \M{-LsI_1+\left(Ls+R_2+\frac1{Cs}\right)I_2=0}
@@ -330,7 +346,7 @@ Find the transfer function \(\dfrac{I_2(s)}{E_i(s)}\) of the following network.
 نقسم على $E_i$:
 \Q{\boxed{\frac{I_2}{E_i}=\frac{Ls}{(R_1+Ls)(Ls+R_2+\frac1{Cs})-L^2s^2}}\tag{4}}
 هذه هي دالة الانتقال قبل التبسيط.
-\Step{6}{تبسيط دالة الانتقال (\textenglish{Simplification})}
+\Step{6}{تبسيط دالة الانتقال}{Simplification}
 نبدأ بفتح الأقواس في المقام:
 \Q{(R_1+Ls)\left(Ls+R_2+\frac1{Cs}\right)-L^2s^2}
 نضرب كل حد من القوس الأول في حدود القوس الثاني:
@@ -347,7 +363,7 @@ Find the transfer function \(\dfrac{I_2(s)}{E_i(s)}\) of the following network.
 \M{=L(R_1+R_2)s+R_1R_2+\frac{R_1}{Cs}+\frac{L}{C}}
 نعوض في دالة الانتقال:
 \Q{\frac{I_2}{E_i}=\frac{Ls}{L(R_1+R_2)s+R_1R_2+\frac{R_1}{Cs}+\frac{L}{C}}}
-\Step{7}{إزالة الكسور من المقام}
+\Step{7}{إزالة الكسور من المقام}{Algebraic simplification}
 نضرب البسط والمقام في $Cs$:
 \Q{\frac{I_2}{E_i}=\frac{Ls(Cs)}{\left[L(R_1+R_2)s+R_1R_2+\frac{R_1}{Cs}+\frac{L}{C}\right]Cs}}
 نضرب البسط:
