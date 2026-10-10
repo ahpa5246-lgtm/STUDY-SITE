@@ -1,0 +1,58 @@
+name: Build Arabic homework PDF
+
+on:
+  push:
+    paths:
+      - 'حل واجبات المحاضرة الاولى.tex'
+      - 'scripts/build_pdf.py'
+      - '.github/workflows/build-arabic-pdf.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - name: Check out study notes
+        uses: actions/checkout@v4
+
+      - name: Install XeLaTeX, Arabic font and PDF tools
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends \
+            texlive-xetex texlive-lang-arabic texlive-latex-extra \
+            texlive-pictures fonts-hosny-amiri fonts-dejavu-core
+          python3 -m pip install --break-system-packages --quiet pymupdf pillow
+
+      - name: Compile source with XeLaTeX
+        shell: bash
+        run: |
+          set -euo pipefail
+          xelatex -interaction=nonstopmode -halt-on-error \
+            -jobname=hw_vector "حل واجبات المحاضرة الاولى.tex"
+          xelatex -interaction=nonstopmode -halt-on-error \
+            -jobname=hw_vector "حل واجبات المحاضرة الاولى.tex"
+
+      - name: Create PDF with stable Arabic rendering
+        run: python3 scripts/build_pdf.py
+
+      - name: Verify both PDFs
+        run: |
+          test -s "حل واجبات المحاضرة الاولى.pdf"
+          test -s "حل واجبات المحاضرة الاولى - نسخة نصية.pdf"
+          pdfinfo "حل واجبات المحاضرة الاولى.pdf" | grep -E "Pages:|Page size:"
+
+      - name: Commit updated PDF files
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add "حل واجبات المحاضرة الاولى.pdf" \
+                  "حل واجبات المحاضرة الاولى - نسخة نصية.pdf"
+          if ! git diff --staged --quiet; then
+            git commit -m "Rebuild Arabic homework PDF with compatible font rendering"
+            git push
+          fi
