@@ -37,21 +37,25 @@ function diagram(kind){
  }else if(kind==="hw-inductors"){
   b=source()+svgTag('M35 72 H89')+coil(105,206,72,"L₁")+svgTag('M206 72 H270 V94')+coil(334,435,72,"L₂")+svgTag('M270 72 H316 M435 72 H490 V145 M490 157 V228 H35')+resV(270,95,228,"R")+svgTag('M472 145 h36 M472 157 h36','part')+txt(531,155,"C")+dot(270,72)+svgTag('M321 45 V30 H440 V45','flow')+txt(324,21,"+ Vₒ −",'out')+input("Vᵢ");
   // Fix coil output voltage ends correspond to the two ends of L₂.
- }else if(kind==="mass-single"||kind==="mass-two"||kind==="mass-two-simple"||kind==="train"){
-  const two=kind!=="mass-single";
-  b=svgTag("M32 222 H592","ground");
-  if(!two){
-   b+=svgTag('M38 48 V218 M42 48 V218')+springH(42,283,92,"k")+svgTag('M42 175 H91')+damperH(91,270,175,"fᵥ")+svgTag('M270 175 H284');
-   b+='<rect class="fillmass" x="284" y="70" width="125" height="125" rx="9"/>'+txt(346,133,"M")+svgTag('M410 131 H540','active')+svgTag('M530 122 l10 9 -10 9','active')+txt(480,112,"F(t)")+txt(349,56,"x(t) →");
-  }else{
-   b+='<rect class="fillmass" x="70" y="76" width="125" height="121" rx="8"/>'+txt(132,137,kind==="mass-two-simple"?"1 kg":kind==="train"?"m₂":"M₂")+'<rect class="fillmass" x="416" y="76" width="125" height="121" rx="8"/>'+txt(478,137,kind==="mass-two-simple"?"1 kg":kind==="train"?"m₁":"M₁");
-   b+=springH(195,416,105,kind==="mass-two-simple"?"k=1":kind==="train"?"k":"k₂")+damperH(195,416,165,kind==="mass-two-simple"?"b=1":kind==="train"?"b":"fᵥ₃");
-   b+=svgTag('M542 118 H595','active')+svgTag('M587 110 l8 8 -8 8','active')+txt(568,103,"F(t)")+txt(133,64,kind==="train"?"x₂": "x₂")+txt(476,64,"x₁");
-   if(kind==="mass-two"){b+=txt(132,213,"k₃ , fᵥ₂")+txt(480,213,"k₁ , fᵥ₁")}if(kind==="train"){b+=txt(132,213,"c₂")+txt(480,213,"c₁")}
-  }
+ }else if(kind==="mass-single"){
+  b=svgTag("M32 222 H592","ground")+svgTag('M38 48 V218 M42 48 V218')+springH(42,283,92,"k")+svgTag('M42 175 H91')+damperH(91,270,175,"fᵥ")+svgTag('M270 175 H284');
+  b+='<rect class="fillmass" x="284" y="70" width="125" height="125" rx="9"/>'+txt(346,133,"M")+svgTag('M410 131 H540','active')+svgTag('M530 122 l10 9 -10 9','active')+txt(480,112,"F(t)")+txt(349,56,"x(t) →");
+ }else if(kind==="mass-two"||kind==="mass-two-simple"){
+  const simple=kind==="mass-two-simple",x1=simple?112:153,x2=simple?388:385,w=118;
+  b=svgTag('M22 225 H598','ground');
+  if(!simple){b+=svgTag('M21 47 V215 M599 47 V215','ground')+springH(24,x1,103,"k₁")+springH(x2+w,594,103,"k₃");}
+  b+='<rect class="fillmass" x="'+x1+'" y="82" width="'+w+'" height="113" rx="8"/>'+txt(x1+w/2,143,simple?"1 kg":"M₁")+'<rect class="fillmass" x="'+x2+'" y="82" width="'+w+'" height="113" rx="8"/>'+txt(x2+w/2,143,simple?"1 kg":"M₂");
+  b+=springH(x1+w,x2,113,simple?"k = 1":"k₂")+damperH(x1+w,x2,163,simple?"b = 1":"fᵥ₃");
+  b+=svgTag('M'+(x1-77)+' 143 H'+(x1-10),'active')+svgTag('M'+(x1-20)+' 135 l10 8 -10 8','active')+txt(x1-54,128,"F(t)")+txt(x1+w/2,66,"x₁ →")+txt(x2+w/2,66,"x₂ →");
+  if(simple){b+=txt(314,219,"Frictionless");}else{b+=txt(x1+w/2,214,"fᵥ₁")+txt(x2+w/2,214,"fᵥ₂");}
+ }else if(kind==="train"){
+  b=svgTag('M32 222 H592','ground')+'<rect class="fillmass" x="70" y="76" width="125" height="121" rx="8"/>'+txt(132,137,"m₂")+'<rect class="fillmass" x="416" y="76" width="125" height="121" rx="8"/>'+txt(478,137,"m₁");
+  b+=springH(195,416,105,"k")+damperH(195,416,165,"b")+svgTag('M542 118 H595','active')+svgTag('M587 110 l8 8 -8 8','active')+txt(568,103,"F(t)")+txt(133,64,"x₂")+txt(476,64,"x₁")+txt(132,213,"c₂")+txt(480,213,"c₁");
  }else if(kind==="suspension"){
-  b=svgTag('M70 223 H546','ground')+svgTag('M310 198 V223')+'<rect class="fillmass" x="228" y="42" width="164" height="54" rx="9"/>'+txt(310,75,"m")+txt(419,70,"xₒ →")+svgTag('M250 96 V116')+springH(0,0,0,"").replace(/[\s\S]*/,"");
-  b+=svgTag('M250 116 l-10 8 l20 10 l-20 10 l20 10 l-20 10 l10 8 V196','part')+damperH(310,350,144,"b")+svgTag('M350 144 V193 M250 196 H351')+txt(211,148,"k")+svgTag('M305 200 V222','active')+txt(401,218,"xᵢ →")+svgTag('M310 222 v-21');
+  b=svgTag('M75 226 H545','ground')+'<rect class="fillmass" x="228" y="42" width="164" height="54" rx="9"/>'+txt(310,75,"m")+txt(425,67,"xₒ →");
+  b+=svgTag('M262 96 V113 l-12 8 l24 10 l-24 10 l24 10 l-12 8 V196','part')+txt(222,151,"k");
+  b+=svgTag('M360 96 V124 M348 124 H372 V165 H348 V124 M360 144 V196','part')+txt(393,150,"b");
+  b+=svgTag('M240 196 H381 V226','wire')+svgTag('M262 196 V226')+txt(435,218,"xᵢ →");
  }else if(kind==="spring-net"){
   b=svgTag('M150 25 H430 M150 232 H430','wire')+txt(462,31,"xᵢ")+txt(466,124,"xₒ")+txt(466,195,"y");
   b+=svgTag('M265 25 V46')+svgTag('M265 46 l-13 8 l26 11 l-26 11 l26 11 l-13 9 V116','part')+txt(224,70,"k₁");
