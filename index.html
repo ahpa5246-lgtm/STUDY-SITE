@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#183f39">
+<meta name="description" content="درس تفاعلي عربي يحل جميع أمثلة وواجبات المحاضرة الثانية في نظرية السيطرة: 11 مثالاً و5 واجبات، بخطوات مصورة وتفسير مصدر كل معادلة.">
+<title>مسائل المحاضرة الثانية | نظرية السيطرة</title>
+<link rel="stylesheet" href="style.css">
+<script>
+window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],processEscapes:true},options:{skipHtmlTags:['script','noscript','style','textarea','pre']},startup:{typeset:true}};
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+<script defer src="data.js"></script>
+<script defer src="app.js"></script>
+</head>
+<body>
+<div id="backdrop" class="sidebar-backdrop" aria-hidden="true"></div>
+<div class="shell">
+<aside class="side" id="sidebar" aria-label="فهرس الدروس">
+ <a href="#top" class="brand" onclick="document.getElementById('sidebar').classList.remove('open')">
+  <span class="brandmark">Σ</span>
+  <span><strong>دفتر السيطرة</strong><small>CONTROL THEORY / LECTURE 02</small></span>
+ </a>
+ <label for="searchLessons" class="side-label">ابحث عن مسألة</label>
+ <input id="searchLessons" class="quick-search" autocomplete="off" placeholder="مثلاً: متسعة، قطار، واجب 3..." aria-label="البحث في المسائل">
+ <nav id="lessonNav" class="lesson-nav" aria-label="المسائل"><p class="empty-msg">جارٍ تحميل الأمثلة...</p></nav>
+ <div class="side-bottom">
+  <div id="sideProgressText">0 من 16 مسائل</div>
+  <div class="side-progress" aria-label="نسبة الإنجاز"><b id="progressBar"></b></div>
+  <p>تقدمك يُحفظ على هذا الجهاز فقط.</p>
+ </div>
+</aside>
+<main class="main" id="top">
+ <header class="topbar">
+  <div style="display:flex;align-items:center;gap:9px">
+   <button id="menuBtn" class="iconbtn mobile-menu" aria-label="افتح فهرس الدروس">☰</button>
+   <span class="crumb">هندسة تقنيات الميكاترونكس / المرحلة الثالثة</span>
+  </div>
+  <div class="toptools">
+   <span class="section-counter" id="doneCount">0</span><span class="crumb">مكتملة</span>
+   <button class="btn" type="button" id="sizeBtn" title="تكبير حجم نص الشرح">تكبير الخط</button>
+  </div>
+ </header>
+ <section class="hero">
+  <div class="eyebrow">CONTROL THEORY • LECTURE TWO • 2026/2027</div>
+  <h1>افهم المسألة من رسمها،<br>ثم اكتب المعادلة.</h1>
+  <p>سنحدد الدخل والخرج أولاً، ثم نعرف من أين جاءت كل معادلة، ونحلّها بالتسلسل. الهدف أن تستطيع إعادة الحل بنفسك حتى لو تغيّر شكل الرسم.</p>
+  <div class="hero-stats">
+   <span><b>11</b> مثالاً من المحاضرة</span>
+   <span><b>05</b> واجبات محلولة</span>
+   <span><b>16</b> رسماً توضيحياً</span>
+  </div>
+ </section>
+ <div class="intro-note"><strong>طريقة الدراسة:</strong> انظر إلى الرسم وحدد العنصر الذي نقيس عليه الخرج. اقرأ خطوة واحدة فقط في كل مرة. إذا لم تعرف سبب المعادلة، اقرأ السطر «من أين جاءت؟» قبل الانتقال إلى الخطوة التالية.</div>
+ <section aria-labelledby="fundamentals" id="essentials">
+  <div class="block-title"><h2 id="fundamentals">المفاتيح التي سنستعملها</h2><span class="section-counter">اقرأها مرة، ثم ابدأ الحل</span></div>
+  <div class="concept-grid">
+   <article class="concept"><small>01 / KVL</small><b>قانون كيرشوف للجهد</b><div class="mathline">\(e_i=\sum v_{\text{element}}\)</div><p>في الحلقة المغلقة، ارتفاعات الجهد تساوي هبوط الجهد. نستعمله لكتابة معادلة الحلقة.</p></article>
+   <article class="concept"><small>02 / KCL</small><b>قانون كيرشوف للتيار</b><div class="mathline">\(I_{\text{in}}=I_1+I_2\)</div><p>عند العقدة، التيار الداخل يساوي الخارج. نستعمله عند التفرع.</p></article>
+   <article class="concept"><small>03 / NEWTON</small><b>قانون نيوتن للحركة</b><div class="mathline">\(\sum F=M\ddot{x}\)</div><p>نجمع القوى المؤثرة على كل كتلة، مع الانتباه إلى اتجاه الإزاحة والقوى.</p></article>
+  </div>
+ </section>
+ <section class="panel lab" style="margin-top:15px" aria-label="مختبر فهم قوانين العناصر">
+  <div class="lab-head"><div><h3>قبل حل الكهرباء: من أين جاءت قوانين العناصر؟</h3><small>اختر العنصر ثم غيّر القيمة لترى العلاقة عملياً.</small></div>
+   <div class="control-pair"><button type="button" class="btn primary" data-law="r">المقاومة</button><button type="button" class="btn" data-law="c">المتسعة</button><button type="button" class="btn" data-law="l">المحث</button></div>
+  </div>
+  <div class="lab-grid">
+   <div><strong id="lawName" style="font-size:14px">المقاومة</strong><div id="lawFormula" class="goal-math" style="margin:10px 0"></div><p class="lead" id="lawExplanation"></p><div class="slidebox" style="margin-top:14px"><label for="lawSlider" id="lawSlideLabel">التيار</label><input id="lawSlider" type="range" min="0" max="10" step=".5" value="3"></div></div>
+   <div class="panel" style="padding:20px;box-shadow:none;background:#f1f5ed;display:flex;flex-direction:column;justify-content:center"><p class="overline">ماذا يحدث لو غيّرنا المقدار؟</p><div id="lawResult" style="font-size:17px;font-weight:700"></div><p class="lead" style="margin-top:9px"><strong>تذكّر:</strong> جهد الخرج ليس قانوناً إضافياً. إنه جهد العنصر أو المسافة بين النقطتين اللتين حددهما السؤال.</p></div>
+  </div>
+ </section>
+ <section class="content-section" id="lessonHost" aria-labelledby="lessonTitle">
+  <div class="block-title"><h2>المسألة الحالية</h2><span class="section-counter" id="stepCount"></span></div>
+  <div class="lesson-header">
+   <div><div class="meta"><span class="group" id="currentCategory">الدوائر الكهربائية</span><span id="pageNum"></span><span>المعادلات بشرط قيم ابتدائية صفرية</span></div><h2 id="lessonTitle">مثال 2.1</h2></div>
+   <button type="button" class="btn" id="doneButton">علّم المسألة كمكتملة</button>
+  </div>
+  <div class="learning-area">
+   <section class="panel diagram-panel" aria-label="الرسم الفيزيائي للمسألة">
+    <div class="diagram-top"><span class="overline">01 — الرسم: اقرأ مواضع التوصيل</span><span class="notechip">شكل تعليمي</span></div>
+    <div class="diagram-frame" id="diagram" dir="ltr">تحميل الرسم...</div>
+    <p class="diagram-footer" id="diagramCaption"></p>
+   </section>
+   <section class="panel goal-panel">
+    <div><span class="overline">02 — ما الذي يطلبه السؤال؟</span><h3>نسبة الخرج إلى الدخل</h3></div>
+    <div class="goal-math" id="goalMath"></div>
+    <p class="lead" id="lessonLead"></p>
+    <div class="pill-row"><span>حدّد عنصر الخرج</span><span>اكتب القانون</span><span>عوّض بعد الفهم</span></div>
+   </section>
+  </div>
+  <div class="warning" id="warn" hidden></div>
+  <section class="panel steps-panel" aria-labelledby="step-heading">
+   <div class="steps-heading"><h3 id="step-heading">الحل خطوة بخطوة</h3><span class="stepnum" id="stepNumber">1 / 6</span></div>
+   <div class="progress-track" aria-hidden="true"><span id="stepProgress"></span></div>
+   <div id="stepsHost" aria-live="polite"></div>
+   <div class="step-controls">
+    <div class="control-pair">
+     <button class="btn" type="button" id="prevStep">→ السابقة</button>
+     <button class="btn primary" type="button" id="nextStep">الخطوة التالية ←</button>
+    </div>
+    <button class="btn" type="button" id="allSteps">عرض الحل كاملاً</button>
+   </div>
+   <div class="step-thumbs" id="miniSteps" style="margin-top:13px"></div>
+   <div id="finalBox" class="result-block" hidden>
+    <small>دالة الانتقال النهائية</small><div class="result-math" id="finalMath"></div>
+   </div>
+  </section>
+  <section class="panel quiz" aria-labelledby="quiz-head">
+   <span class="overline">فهمك أهم من حفظ الإجابة</span>
+   <h3 id="quiz-head">سؤال قصير قبل أن تنتقل</h3>
+   <p id="quizQ"></p>
+   <div class="choices" id="quizOptions"></div>
+   <p class="answer-note" id="quizFeedback" aria-live="polite"></p>
+  </section>
+  <section class="panel lab" id="labPanel" hidden>
+   <div class="lab-head"><div><h3 id="labTitle">تجربة تفاعلية</h3><small>محاكاة عددية تعليمية لدخل ثابت يساوي وحدة واحدة؛ وليست قياسات مختبر.</small></div><span class="notechip">غيّر القيم</span></div>
+   <div class="lab-grid"><div class="sliders" id="labInputs"></div><div class="graph" id="labGraph" dir="ltr"></div></div>
+   <p class="lab-summary" id="labSummary"></p>
+  </section>
+  <div class="chapter-switch"><button class="btn" type="button" id="firstButton">→ المسألة السابقة</button><button class="btn primary" type="button" id="lastButton">المسألة التالية ←</button></div>
+ </section>
+ <section class="method" aria-labelledby="method-heading">
+  <h3 id="method-heading">إذا تغير شكل الدائرة أو النظام في الامتحان، من أين تبدأ؟</h3>
+  <p>اتبع التسلسل نفسه دون القفز إلى دالة الانتقال مباشرة.</p>
+  <div class="method-grid">
+   <div><b>01</b> حدد الدخل والخرج من الرسم.</div>
+   <div><b>02</b> اختر كيرشوف أو نيوتن واكتب معادلات العناصر.</div>
+   <div><b>03</b> حوّل إلى مجال \(s\) واحذف المتغيرات الوسطية.</div>
+   <div><b>04</b> اكتب نسبة الخرج إلى الدخل، ثم راجع الوحدات والرتبة.</div>
+  </div>
+ </section>
+ <footer class="footer">مادة نظرية السيطرة — المحاضرة الثانية، المرحلة الثالثة، الجامعة التقنية الوسطى، 2026–2027. الرسوم توضيحية أُعيد بناؤها للتعلّم اعتماداً على أشكال الملزمة. المسائل مرقّمة وفق مصدر المحاضرة.</footer>
+</main>
+</div>
+</body>
+</html>
