@@ -1,10 +1,8 @@
-name: Build Arabic homework PDF
-
+name: Build Control Theory Homework PDF (LuaLaTeX)
 on:
   push:
     paths:
       - 'حل واجبات المحاضرة الاولى.tex'
-      - 'scripts/build_pdf.py'
       - '.github/workflows/build-arabic-pdf.yml'
   workflow_dispatch:
 
@@ -16,44 +14,50 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 25
     steps:
-      - name: Check out study notes
+      - name: Check out project
         uses: actions/checkout@v4
 
-      - name: Install XeLaTeX, Arabic font and PDF tools
+      - name: Install LuaLaTeX and engineering fonts
         run: |
           sudo apt-get update -qq
           sudo apt-get install -y --no-install-recommends \
-            texlive-xetex texlive-lang-arabic texlive-latex-extra \
-            texlive-pictures texlive-fonts-recommended texlive-latex-recommended \
-            fonts-hosny-amiri fonts-dejavu-core
-          python3 -m pip install --break-system-packages --quiet pymupdf pillow
+            texlive-luatex texlive-latex-extra texlive-latex-recommended \
+            texlive-pictures texlive-fonts-recommended \
+            fonts-urw-base35 fonts-dejavu-core poppler-utils
 
-      - name: Compile source with XeLaTeX
+      - name: Compile report using LuaLaTeX
         shell: bash
         run: |
           set -euo pipefail
-          xelatex -interaction=nonstopmode -halt-on-error \
+          lualatex -interaction=nonstopmode -halt-on-error \
             -jobname=hw_vector "حل واجبات المحاضرة الاولى.tex"
-          xelatex -interaction=nonstopmode -halt-on-error \
+          lualatex -interaction=nonstopmode -halt-on-error \
             -jobname=hw_vector "حل واجبات المحاضرة الاولى.tex"
 
-      - name: Create PDF with stable Arabic rendering
-        run: python3 scripts/build_pdf.py
-
-      - name: Verify both PDFs
+      - name: Export clean English vector PDFs
+        shell: bash
         run: |
-          test -s "حل واجبات المحاضرة الاولى.pdf"
-          test -s "حل واجبات المحاضرة الاولى - نسخة نصية.pdf"
-          python3 -c 'import pymupdf; p=pymupdf.open("حل واجبات المحاضرة الاولى.pdf"); assert len(p)==18, f"Expected 18 pages, got {len(p)}"; print("Verified PDF pages:",len(p))'
+          set -euo pipefail
+          cp hw_vector.pdf "حل واجبات المحاضرة الاولى.pdf"
+          cp hw_vector.pdf "حل واجبات المحاضرة الاولى - نسخة نصية.pdf"
+          cp hw_vector.pdf "Control_Theory_Lecture_2_Homework.pdf"
+          pdfinfo "Control_Theory_Lecture_2_Homework.pdf" | grep -E '^Pages:[[:space:]]+8$'
+          pdftotext -layout "Control_Theory_Lecture_2_Homework.pdf" - \
+            | grep -q 'MIDDLE TECHNICAL UNIVERSITY'
+          if pdftotext "Control_Theory_Lecture_2_Homework.pdf" - | grep -Pq '[\x{0600}-\x{06FF}]'; then
+            echo "Unexpected Arabic script in English PDF" >&2
+            exit 1
+          fi
 
-      - name: Commit updated PDF files
+      - name: Commit generated PDF files
         shell: bash
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add "حل واجبات المحاضرة الاولى.pdf" \
-                  "حل واجبات المحاضرة الاولى - نسخة نصية.pdf"
+                  "حل واجبات المحاضرة الاولى - نسخة نصية.pdf" \
+                  "Control_Theory_Lecture_2_Homework.pdf"
           if ! git diff --staged --quiet; then
-            git commit -m "Rebuild Arabic homework PDF with compatible font rendering"
+            git commit -m "Rebuild all-English homework report with LuaLaTeX"
             git push
           fi

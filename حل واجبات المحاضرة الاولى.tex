@@ -1,384 +1,293 @@
-% Arabic typography repair: XeLaTeX + polyglossia + embedded Amiri.
-% Mixed-language headings are isolated; stable PDF is rendered from this source.
-%!TEX program = xelatex
-\documentclass[12pt,a4paper]{article}
-\usepackage[margin=21mm,top=25mm,bottom=23mm]{geometry}
-\usepackage{fontspec,polyglossia,amsmath,amssymb,mathtools,microtype}
-\usepackage{tikz,circuitikz,xcolor,hyperref,fancyhdr,tcolorbox,needspace,enumitem}
-\setmainlanguage{arabic}
-\setotherlanguage{english}
-\newfontfamily\arabicfont[Script=Arabic,Scale=1.08]{Amiri}
-\newfontfamily\arabicfontsf[Script=Arabic,Scale=1.00]{Amiri}
-\setmainfont{DejaVu Serif}
+% !TeX program = lualatex
+\documentclass[10pt,a4paper]{article}
+\usepackage[english]{babel}
+\usepackage{fontspec}
+\IfFontExistsTF{Palatino Linotype}{%
+  \setmainfont{Palatino Linotype}[Ligatures=TeX]
+}{%
+  \setmainfont{P052}[Ligatures=TeX] % Palatino-compatible font on Linux
+}
 \setsansfont{DejaVu Sans}
-\definecolor{ink}{HTML}{213C36}
-\definecolor{accent}{HTML}{187767}
-\definecolor{muted}{HTML}{64776F}
-\definecolor{linecol}{HTML}{E1E9E5}
-\definecolor{light}{HTML}{F1F7F3}
-\definecolor{amber}{HTML}{B47B3D}
-\hypersetup{colorlinks=true,urlcolor=accent,linkcolor=accent,pdfauthor={Control Theory Study Notes},pdftitle={حل واجبات المحاضرة الاولى}}
+\usepackage{mathpazo}
+\usepackage[margin=22mm,top=24mm,bottom=22mm,headheight=14pt]{geometry}
+\usepackage{amsmath,mathtools,booktabs,enumitem,microtype}
+\usepackage{tikz,circuitikz}
+\usetikzlibrary{arrows.meta,calc}
+\usepackage{float,xcolor,fancyhdr,hyperref,needspace}\usepackage[framemethod=tikz]{mdframed}
+\definecolor{EngBlue}{HTML}{003366}
+\definecolor{BlueAccent}{HTML}{1E698C}
+\definecolor{LightBlueBg}{HTML}{F0F8FF}
+\definecolor{DarkInk}{HTML}{162D42}
+\definecolor{PaleLine}{HTML}{D8E4ED}
+\definecolor{Muted}{HTML}{586D7F}
+\hypersetup{hypertexnames=false,colorlinks=true,linkcolor=EngBlue,urlcolor=BlueAccent,
+  pdftitle={Control Theory - Lecture 2 - Electrical Homework Solutions},
+  pdfauthor={Mina Hussein Salman}}
 \setlength{\parindent}{0pt}
-\setlength{\parskip}{5pt}
-\renewcommand{\baselinestretch}{1.13}
-\setlist[itemize]{topsep=2pt,itemsep=2pt,parsep=0pt,rightmargin=16pt}
-\pagestyle{fancy}
-\fancyhf{}
-\fancyhead[R]{\footnotesize\textcolor{muted}{حل واجبات المحاضرة الاولى}}
-\fancyhead[L]{\footnotesize\textcolor{muted}{\textenglish{CONTROL THEORY}}}
-\fancyfoot[C]{\footnotesize\textcolor{muted}{\thepage}}
-\renewcommand{\headrulewidth}{0.3pt}
+\setlength{\parskip}{4pt}
+\allowdisplaybreaks[1]
+\AtBeginDocument{%
+ \setlength{\abovedisplayskip}{6pt}%
+ \setlength{\belowdisplayskip}{6pt}%
+ \setlength{\abovedisplayshortskip}{3pt}%
+ \setlength{\belowdisplayshortskip}{4pt}%
+ \setlength{\jot}{2pt}%
+}
+\renewcommand{\arraystretch}{1.22}
+\pagestyle{fancy}\fancyhf{}
+\fancyfoot[C]{\color{Muted}\sffamily\small\thepage}
+\renewcommand{\headrulewidth}{0pt}
 \renewcommand{\footrulewidth}{0pt}
-\setlength{\headheight}{17pt}
-\newcommand{\M}[1]{\begingroup\begin{LTR}\begin{equation*}#1\end{equation*}\end{LTR}\endgroup}
-\newcommand{\Q}[1]{\begingroup\small\begin{LTR}\begin{equation*}#1\end{equation*}\end{LTR}\endgroup}
-\newcommand{\Step}[3]{%
-\Needspace{82pt}\par\vspace{9pt}%
-\noindent{\arabicfontsf\bfseries\large\color{ink}#2}\par
-\begin{LTR}\noindent{\color{accent}\footnotesize\sffamily\bfseries\textenglish{STEP #1 / #3}}\end{LTR}%
-\vspace{3pt}\noindent\textcolor{linecol}{\rule{\textwidth}{0.5pt}}\par}
-\newcommand{\Homework}[1]{\clearpage\vspace*{5pt}
-\begin{LTR}\noindent\textcolor{accent}{\rule{34mm}{2.2pt}}\\[7pt]{\sffamily\bfseries\Large\textenglish{Homework #1}}\end{LTR}
-\vspace{4pt}\noindent{\LARGE\arabicfontsf\bfseries\color{ink}الحل بطريقة تحليل تيارات الحلقات}\par
-\begin{LTR}\noindent{\color{muted}\normalsize\sffamily\textenglish{Mesh Analysis}}\end{LTR}\vspace{7pt}}
-\newcommand{\Final}[1]{\par\vspace{9pt}\begin{tcolorbox}[colback=light,colframe=accent,boxrule=0.7pt,arc=2mm,left=12pt,right=12pt,top=11pt,bottom=9pt]\noindent{\large\bfseries\textcolor{accent}{\textenglish{Final Answer} - الجواب النهائي}}\par\M{\boxed{#1}}\end{tcolorbox}}
-\newcommand{\Remember}[1]{\vspace{10pt}\noindent\textbf{للحفظ والفهم:} #1}
-\AtBeginDocument{\color{ink}}
+\newcommand{\Eq}[1]{\begin{equation*}\displaystyle #1\end{equation*}}
+\newcommand{\Eqs}[1]{\begin{align*}#1\end{align*}}
+\newcommand{\Heading}[1]{\Needspace{55pt}\vspace{7pt}{\sffamily\bfseries\color{EngBlue}#1}\par\vspace{2pt}\textcolor{PaleLine}{\rule{\linewidth}{0.5pt}}\vspace{-3pt}}
+\newcommand{\SectionHead}[2]{\clearpage\vspace*{5pt}
+\noindent{\color{BlueAccent}\rule{23mm}{2.2pt}}\par\vspace{11pt}
+{\sffamily\bfseries\fontsize{22}{27}\selectfont\color{EngBlue}Homework #1}\par
+{\sffamily\fontsize{11}{14}\selectfont\color{Muted}#2}\par\vspace{11pt}}
+\newmdenv[
+  linecolor=EngBlue,backgroundcolor=LightBlueBg,
+  linewidth=1.15pt,roundcorner=4pt,
+  innerleftmargin=13pt,innerrightmargin=13pt,
+  innertopmargin=13pt,innerbottommargin=12pt,
+  skipabove=14pt,skipbelow=14pt,
+  ]{resultbox}
+\newcommand{\Final}[1]{\begin{resultbox}
+  {\sffamily\bfseries\footnotesize\color{EngBlue}FINAL TRANSFER FUNCTION}\par\vspace{4pt}
+  \Eq{\boxed{#1}}\end{resultbox}}
+\newcommand{\Circ}[1]{\begin{figure}[H]\centering #1\caption{Circuit of Homework \thehomework.}\end{figure}}
+\newcounter{homework}
+\setcounter{homework}{0}
 \begin{document}
+\begin{titlepage}
 \thispagestyle{empty}
-\vspace*{33mm}
+\begin{tikzpicture}[remember picture,overlay]
+  \fill[EngBlue] (current page.north west) rectangle ([yshift=-14mm]current page.north east);
+  \fill[BlueAccent] ([xshift=23mm,yshift=-23mm]current page.north west)
+    rectangle ([xshift=38mm,yshift=-25mm]current page.north west);
+  \draw[PaleLine,line width=0.7pt] ([xshift=24mm,yshift=25mm]current page.south west)
+     -- ([xshift=-24mm,yshift=25mm]current page.south east);
+  \draw[PaleLine,line width=0.7pt] ([xshift=24mm,yshift=-37mm]current page.north west)
+     -- ([xshift=-24mm,yshift=-37mm]current page.north east);
+\end{tikzpicture}
+\vspace*{27mm}
 \begin{center}
-{\color{accent}\textenglish{CONTROL THEORY}\\[5pt]\textenglish{ELECTRICAL SYSTEMS}}\\[26pt]
-{\arabicfontsf\bfseries\fontsize{27}{41}\selectfont حل واجبات\\المحاضرة الاولى}\\[12pt]
-{\color{muted}\arabicfont\Large طريقة تيارات الحلقات - \textenglish{Mesh Analysis}}\\[14pt]
-\begin{tikzpicture}\draw[accent,line width=1.2pt](-3.5,0)--(3.5,0);\fill[amber](0,0)circle(2pt);\end{tikzpicture}\\[21pt]
-{\textenglish{Homework 01 / 02 / 03}}\\[5pt]
-{\large الأسئلة بالعربية والإنجليزية، والحلول الرياضية خطوة بخطوة}
+{\sffamily\bfseries\Large\color{EngBlue}MIDDLE TECHNICAL UNIVERSITY}\par\vspace{9pt}
+{\large College of Engineering Technology}\par\vspace{5pt}
+{\large Department of Mechatronics Engineering Technology}\par
+\vspace{34mm}
+{\sffamily\small\bfseries\color{BlueAccent}ENGINEERING HOMEWORK REPORT}\par\vspace{11pt}
+{\sffamily\bfseries\fontsize{32}{39}\selectfont\color{EngBlue}CONTROL THEORY}\par\vspace{8pt}
+{\sffamily\bfseries\fontsize{23}{29}\selectfont\color{DarkInk}Lecture 2}\par\vspace{11pt}
+{\sffamily\fontsize{16}{20}\selectfont\color{Muted}Electrical Circuits}\par\vspace{5pt}
+{\sffamily\fontsize{13}{16}\selectfont\color{Muted}Mesh Analysis -- Homework 1, 2 and 3}\par
+\vspace{27mm}
+{\color{BlueAccent}\rule{62mm}{1.1pt}}\par\vspace{14mm}
+\begin{tabular}{@{}r@{\hspace{14mm}}l@{}}
+Student & Mina Hussein Salman\\[6pt]
+Stage & Second Stage\\[6pt]
+Subject & Control Theory\\[6pt]
+Lecture & 2\\[6pt]
+Date & \today\\
+\end{tabular}
 \end{center}
 \vfill
-\begin{tcolorbox}[colback=light,colframe=linecol,boxrule=.5pt,arc=2mm]
-\begin{center}
-\textbf{مادة نظرية السيطرة - المرحلة الثالثة}\\
-\textenglish{Transfer Functions • Kirchhoff's Laws • Laplace Impedances}
-\end{center}
-\end{tcolorbox}
-\newpage
-\Homework{1}
-\textbf{السؤال بالإنجليزي (\textenglish{English}):}
-\begin{LTR}\begin{english}
-Find the transfer function \(\dfrac{V_o(s)}{V_i(s)}\) of the following network.
-\end{english}\end{LTR}
-\textbf{السؤال بالعربي:}
-أوجد دالة الانتقال للدائرة الكهربائية الموضحة في الشكل باستخدام طريقة تحليل تيارات الحلقات (\textenglish{Mesh Analysis}).
+\begin{center}{\sffamily\small\color{Muted}Department of Mechatronics Engineering Technology}\end{center}
+\end{titlepage}
 
-المطلوب:
-\M{\boxed{G(s)=\frac{V_o(s)}{V_i(s)}}}
-\begin{center}
-\begin{LTR}
-\begin{circuitikz}[american,scale=.88,transform shape]
-\draw (0,0) to[sV,l=$V_i$] (0,3) to[L,l=$L_1$] (3.2,3) to[L,l=$L_2$] (6.4,3) to[C,l=$C$] (6.4,0)--(0,0);
-\draw (3.2,3) to[R,l=$R$] (3.2,0);
-\node at (1.65,1.4) {$I_1$};\node at (4.82,1.4) {$I_2$};
-\node[above,accent] at (4.8,4.2) {$+\quad V_o\quad -$};
+% ---------------------- HOMEWORK 1 ----------------------
+\stepcounter{homework}
+\SectionHead{1}{Mesh Current Analysis}
+\textbf{Question.} Find the transfer function $G(s)=V_o(s)/V_i(s)$ of the circuit shown below.
+\begin{figure}[H]\centering
+\begin{circuitikz}[american,scale=.91,transform shape]
+\draw (0,0) to[sV,l_=$V_i$] (0,3) to[L,l=$L_1$] (3.15,3)
+      to[L,l=$L_2$] (6.3,3) to[C,l=$C$] (6.3,0) -- (0,0);
+\draw (3.15,3) to[R,l=$R$] (3.15,0);
+\node at (1.6,1.45) {$I_1$};\node at (4.78,1.4) {$I_2$};
+\draw[-{Stealth[length=2.5mm]},BlueAccent,thin] (1.25,1.25) arc[start angle=210,end angle=-90,radius=.42];
+\draw[-{Stealth[length=2.5mm]},BlueAccent,thin] (4.42,1.25) arc[start angle=210,end angle=-90,radius=.42];
+\node[BlueAccent,above] at (4.76,3.73) {$+\;V_o\;-$};
+\draw[BlueAccent,thin] (3.92,3.64) -- (3.92,3.42);
+\draw[BlueAccent,thin] (5.62,3.64) -- (5.62,3.42);
 \end{circuitikz}
-\end{LTR}
-\end{center}
-\Step{1}{تحديد تيارات الحلقات}{Mesh Currents}
-نفترض تيارين باتجاه عقارب الساعة:
-\begin{itemize}
-\item $I_1$: تيار الحلقة الأولى، التي تحتوي المصدر $V_i$، والمحث $L_1$، والمقاومة $R$.
-\item $I_2$: تيار الحلقة الثانية، التي تحتوي المقاومة $R$، والمحث $L_2$، والمتسعة $C$.
-\end{itemize}
-المقاومة $R$ مشتركة بين الحلقتين، ولذلك تيارها باتجاه الحلقة الأولى:
-\M{\boxed{I_R=I_1-I_2}}
-\Step{2}{تحويل العناصر إلى ممانعات}{Impedances}
-\M{Z_{L_1}=L_1s\qquad Z_{L_2}=L_2s}
-\M{Z_R=R\qquad Z_C=\frac{1}{Cs}}
-نستخدم العلاقة:
-\M{\boxed{V=ZI}}
-\Step{3}{تطبيق قانون كيرشوف للجهد على الحلقة الأولى}{KVL / Mesh 1}
-حسب قانون كيرشوف، جهد المصدر يساوي مجموع هبوط الجهد على المحث الأول والمقاومة:
-\M{V_i=V_{L_1}+V_R}
-نعوض:
-\M{V_i=L_1sI_1+R(I_1-I_2)}
-نفتح الأقواس:
-\M{V_i=L_1sI_1+RI_1-RI_2}
-نجمع حدود $I_1$:
-\M{\boxed{(L_1s+R)I_1-RI_2=V_i}\tag{1}}
-\Step{4}{تطبيق قانون كيرشوف للجهد على الحلقة الثانية}{KVL / Mesh 2}
-الحلقة الثانية لا تحتوي مصدراً، لذلك:
-\M{V_R+V_{L_2}+V_C=0}
-نعوض:
-\M{R(I_2-I_1)+L_2sI_2+\frac{I_2}{Cs}=0}
-نفتح الأقواس:
-\M{RI_2-RI_1+L_2sI_2+\frac{I_2}{Cs}=0}
-نجمع حدود $I_2$:
-\M{\boxed{-RI_1+\left(R+L_2s+\frac{1}{Cs}\right)I_2=0}\tag{2}}
-الآن لدينا معادلتان بمجهولين $I_1,I_2$.
-\Step{5}{حذف التيار $I_1$}{Elimination}
-من المعادلة (2):
-\M{-RI_1+\left(R+L_2s+\frac1{Cs}\right)I_2=0}
-ننقل الحد الذي يحتوي $I_1$:
-\M{RI_1=\left(R+L_2s+\frac1{Cs}\right)I_2}
-نقسم على $R$:
-\M{\boxed{I_1=\frac{R+L_2s+\frac1{Cs}}{R}I_2}}
-نعوض في المعادلة (1):
-\M{(L_1s+R)I_1-RI_2=V_i}
-\M{(L_1s+R)\left(\frac{R+L_2s+\frac1{Cs}}{R}I_2\right)-RI_2=V_i}
-نأخذ $I_2$ عاملاً مشتركاً:
-\Q{\left[\frac{(L_1s+R)(R+L_2s+\frac1{Cs})}{R}-R\right]I_2=V_i}
-نوحد المقامات:
-\Q{\left[\frac{(L_1s+R)(R+L_2s+\frac1{Cs})-R^2}{R}\right]I_2=V_i}
-نعزل $I_2$:
-\Q{I_2=\frac{RV_i}{(L_1s+R)(R+L_2s+\frac1{Cs})-R^2}}
-نقسم على $V_i$:
-\Q{\boxed{\frac{I_2}{V_i}=\frac{R}{(L_1s+R)(R+L_2s+\frac1{Cs})-R^2}}\tag{3}}
-\Step{6}{إيجاد جهد الخرج}{Output Voltage}
-لأن الخرج مأخوذ على المحث الثاني $L_2$، والتيار المار فيه $I_2$:
-\M{V_o=Z_{L_2}I_2}
-\M{\boxed{V_o=L_2sI_2}\tag{4}}
-نقسم على $V_i$:
-\M{\frac{V_o}{V_i}=L_2s\frac{I_2}{V_i}}
-نعوض من المعادلة (3):
-\Q{\frac{V_o}{V_i}=L_2s\frac{R}{(L_1s+R)(R+L_2s+\frac1{Cs})-R^2}}
-إذن:
-\Q{\boxed{\frac{V_o}{V_i}=\frac{RL_2s}{(L_1s+R)(R+L_2s+\frac1{Cs})-R^2}}}
-\Step{7}{تبسيط دالة الانتقال}{Simplification}
-نفتح الأقواس في المقام:
-\Q{\begin{aligned}&(L_1s+R)\left(R+L_2s+\frac1{Cs}\right)-R^2\\&=L_1Rs+L_1L_2s^2+\frac{L_1}{C}\\&\quad+R^2+RL_2s+\frac{R}{Cs}-R^2\end{aligned}}
-نختصر $R^2-R^2$:
-\M{=L_1Rs+L_1L_2s^2+\frac{L_1}{C}+RL_2s+\frac{R}{Cs}}
-نجمع الحدود المتشابهة:
-\M{=L_1L_2s^2+R(L_1+L_2)s+\frac{L_1}{C}+\frac{R}{Cs}}
-إذن:
-\Q{\frac{V_o}{V_i}=\frac{RL_2s}{L_1L_2s^2+R(L_1+L_2)s+\frac{L_1}{C}+\frac{R}{Cs}}}
-نضرب البسط والمقام في $Cs$:
-\Q{\frac{V_o}{V_i}=\frac{RL_2Cs^2}{L_1L_2Cs^3+RC(L_1+L_2)s^2+L_1s+R}}
-وأخيراً نقسم البسط والمقام على $R$.
+\caption{Two-mesh $RLC$ circuit; $V_o$ is measured across $L_2$.}
+\end{figure}
+\Heading{1. Laplace-domain impedances}
+\Eqs{
+ Z_{L_1}&=L_1s, & Z_{L_2}&=L_2s, & Z_R&=R, & Z_C&=\frac{1}{Cs},\\
+ V(s)&=Z(s)I(s), & I_R&=I_1-I_2.
+}
+\Heading{2. Mesh 1 (KVL)}
+\Eqs{
+ V_i &=L_1sI_1+R(I_1-I_2)\\
+     &=L_1sI_1+RI_1-RI_2\\
+ \boxed{(L_1s+R)I_1-RI_2}&=V_i. \tag{1}
+}
+\Heading{3. Mesh 2 (KVL)}
+\Eqs{
+ 0&=R(I_2-I_1)+L_2sI_2+\frac{I_2}{Cs}\\
+  &=RI_2-RI_1+L_2sI_2+\frac{I_2}{Cs}\\
+ \boxed{-RI_1+\left(R+L_2s+\frac1{Cs}\right)I_2}&=0. \tag{2}
+}
+\clearpage
+\Heading{4. Eliminate $I_1$}
+\Eqs{
+ RI_1&=\left(R+L_2s+\frac{1}{Cs}\right)I_2\\
+ I_1&=\frac{R+L_2s+\frac{1}{Cs}}{R}I_2\\[3pt]
+ (L_1s+R)\left(\frac{R+L_2s+\frac1{Cs}}{R}\right)I_2-RI_2&=V_i\\[3pt]
+ \left[\frac{(L_1s+R)(R+L_2s+\frac1{Cs})}{R}-R\right]I_2&=V_i.
+}
+\Heading{5. Current ratio and output voltage}
+\Eqs{
+ \left[\frac{(L_1s+R)(R+L_2s+\frac1{Cs})-R^2}{R}\right]I_2&=V_i\\[3pt]
+ \frac{I_2}{V_i}&=\frac{R}{(L_1s+R)(R+L_2s+\frac1{Cs})-R^2}\\[4pt]
+ V_o&=Z_{L_2}I_2=L_2sI_2\\
+ \frac{V_o}{V_i}&=L_2s\frac{I_2}{V_i}\\[4pt]
+ &=\frac{RL_2s}{(L_1s+R)(R+L_2s+\frac1{Cs})-R^2}.
+}
+\Heading{6. Expand and simplify}
+\Eqs{
+ D(s)&=(L_1s+R)\left(R+L_2s+\frac1{Cs}\right)-R^2\\
+ &=L_1Rs+L_1L_2s^2+\frac{L_1}{C}+R^2+RL_2s+\frac{R}{Cs}-R^2\\
+ &=L_1L_2s^2+R(L_1+L_2)s+\frac{L_1}{C}+\frac{R}{Cs}\\[3pt]
+ \frac{V_o}{V_i}&=\frac{RL_2s}{L_1L_2s^2+R(L_1+L_2)s+\frac{L_1}{C}+\frac{R}{Cs}}\\[5pt]
+ &=\frac{RL_2s\,(Cs)}{\left[L_1L_2s^2+R(L_1+L_2)s+\frac{L_1}{C}+\frac{R}{Cs}\right](Cs)}\\[5pt]
+ &=\frac{RL_2Cs^2}{L_1L_2Cs^3+RC(L_1+L_2)s^2+L_1s+R}.
+}
 \Final{\frac{V_o(s)}{V_i(s)}=\frac{L_2Cs^2}{\frac{L_1L_2C}{R}s^3+(L_1+L_2)Cs^2+\frac{L_1}{R}s+1}}
-\Remember{نكتب معادلتي \textenglish{KVL} للحلقتين، ثم نحذف $I_1$ لنحصل على $I_2$. بعدها نستخدم $V_o=L_2sI_2$، لأن الخرج مقاس على المحث الثاني، ونستخرج دالة الانتقال.}
-\Homework{2}
-\textbf{السؤال بالإنجليزي (\textenglish{English}):}
-\begin{LTR}\begin{english}
-Find the transfer function \(\dfrac{E_o(s)}{E_i(s)}\) of the following network.
-\end{english}\end{LTR}
-\textbf{السؤال بالعربي:}
-أوجد دالة الانتقال للدائرة الكهربائية الموضحة في الشكل باستخدام طريقة تحليل تيارات الحلقات (\textenglish{Mesh Analysis}).
-المطلوب:
-\M{\boxed{G(s)=\frac{E_o(s)}{E_i(s)}}}
-تحتوي الدائرة على مقاومتين $R_1,R_2$ ومتسعتين $C_1,C_2$. المقاومة $R_2$ والمتسعة $C_2$ متصلتان على التوازي، بينما المقاومة $R_1$ والمتسعة $C_1$ متصلتان على التوالي في الفرع الأيمن.
-جهد الخرج مأخوذ على المتسعة $C_1$ فقط.
-\begin{center}
-\begin{LTR}
-\begin{circuitikz}[american,scale=.84,transform shape]
-\draw (0,0) to[sV,l=$E_i$] (0,3) --(1.2,3) --(1.2,4.2) to[R,l=$R_2$] (4.6,4.2) -- (4.6,3) -- (6,3) to[R,l=$R_1$] (6,1.6) to[C,l=$C_1$,v^>=$E_o$] (6,0) -- (0,0);
-\draw (1.2,3) to[C,l=$C_2$] (4.6,3);
-\node at (2.4,1.5) {$I_1$};\node at (3,3.72) {$I_2$};
-\end{circuitikz}
-\end{LTR}
-\end{center}
-\Step{1}{تحديد تيارات الحلقات}{Mesh Currents}
-نفترض تيارين باتجاه عقارب الساعة:
-\begin{itemize}
-\item $I_1$: تيار الحلقة السفلية، التي تحتوي المصدر $E_i$، والمتسعة $C_2$، والمقاومة $R_1$، والمتسعة $C_1$.
-\item $I_2$: تيار الحلقة العلوية، التي تحتوي المقاومة $R_2$ والمتسعة $C_2$.
-\end{itemize}
-المتسعة $C_2$ مشتركة بين الحلقتين، ولذلك تيارها باتجاه الحلقة الأولى:
-\M{\boxed{I_{C_2}=I_1-I_2}}
-أما المقاومة $R_1$ والمتسعة $C_1$، فيمر فيهما تيار الحلقة الأولى فقط $I_1$.
-\Step{2}{تحويل العناصر إلى ممانعات}{Impedances}
-\M{Z_{R_1}=R_1\qquad Z_{R_2}=R_2}
-\M{Z_{C_1}=\frac{1}{C_1s}\qquad Z_{C_2}=\frac{1}{C_2s}}
-نستخدم العلاقة:
-\M{\boxed{V=ZI}}
-\Step{3}{تطبيق قانون كيرشوف للجهد على الحلقة الأولى}{KVL / Mesh 1}
-حسب قانون كيرشوف، جهد المصدر يساوي مجموع هبوط الجهد على المتسعة $C_2$، والمقاومة $R_1$، والمتسعة $C_1$:
-\M{E_i=V_{C_2}+V_{R_1}+V_{C_1}}
-نعوض:
-\M{E_i=\frac{I_1-I_2}{C_2s}+R_1I_1+\frac{I_1}{C_1s}}
-نفتح الأقواس:
-\M{E_i=\frac{I_1}{C_2s}-\frac{I_2}{C_2s}+R_1I_1+\frac{I_1}{C_1s}}
-نجمع حدود $I_1$:
-\Q{\boxed{\left(R_1+\frac{1}{C_1s}+\frac{1}{C_2s}\right)I_1-\frac{I_2}{C_2s}=E_i}\tag{1}}
-\Step{4}{تطبيق قانون كيرشوف للجهد على الحلقة الثانية}{KVL / Mesh 2}
-الحلقة العلوية لا تحتوي مصدراً، لذلك:
-\M{V_{R_2}+V_{C_2}=0}
-نعوض:
-\M{R_2I_2+\frac{I_2-I_1}{C_2s}=0}
-نفتح الأقواس:
-\M{R_2I_2+\frac{I_2}{C_2s}-\frac{I_1}{C_2s}=0}
-نجمع حدود $I_2$:
-\Q{\boxed{-\frac{I_1}{C_2s}+\left(R_2+\frac{1}{C_2s}\right)I_2=0}\tag{2}}
-الآن لدينا معادلتان بمجهولين $I_1,I_2$.
-\Step{5}{حذف التيار $I_2$}{Elimination}
-في هذا الواجب نريد في النهاية $I_1$، لأن جهد الخرج مأخوذ على المتسعة $C_1$، والتيار المار فيها هو $I_1$.
-من المعادلة (2):
-\M{-\frac{I_1}{C_2s}+\left(R_2+\frac{1}{C_2s}\right)I_2=0}
-نضرب الطرفين في $C_2s$:
-\M{-I_1+(R_2C_2s+1)I_2=0}
-ننقل $I_1$ للطرف الآخر:
-\M{I_1=(R_2C_2s+1)I_2}
-نقسم على $R_2C_2s+1$:
-\M{\boxed{I_2=\frac{I_1}{R_2C_2s+1}}\tag{3}}
-نعوض في المعادلة (1):
-\Q{\left(R_1+\frac{1}{C_1s}+\frac{1}{C_2s}\right)I_1-\frac{I_2}{C_2s}=E_i}
-\Q{\left(R_1+\frac{1}{C_1s}+\frac{1}{C_2s}\right)I_1-\frac{1}{C_2s}\left(\frac{I_1}{R_2C_2s+1}\right)=E_i}
-نأخذ $I_1$ عاملاً مشتركاً:
-\Q{\left[R_1+\frac{1}{C_1s}+\frac{1}{C_2s}-\frac{1}{C_2s(R_2C_2s+1)}\right]I_1=E_i}
-نجمع الحدين المتعلقين بالمتسعة $C_2$:
-\M{\frac{1}{C_2s}-\frac{1}{C_2s(R_2C_2s+1)}}
-نوحد المقامين:
-\M{=\frac{R_2C_2s+1-1}{C_2s(R_2C_2s+1)}}
-\M{=\frac{R_2C_2s}{C_2s(R_2C_2s+1)}}
-نختصر $C_2s$:
-\M{=\frac{R_2}{R_2C_2s+1}}
-إذن معادلة الدخل تصبح:
-\Q{\left[R_1+\frac{1}{C_1s}+\frac{R_2}{R_2C_2s+1}\right]I_1=E_i}
-نعزل $I_1$:
-\M{I_1=\frac{E_i}{R_1+\frac{1}{C_1s}+\frac{R_2}{R_2C_2s+1}}}
-نقسم على $E_i$:
-\Q{\boxed{\frac{I_1}{E_i}=\frac{1}{R_1+\frac{1}{C_1s}+\frac{R_2}{R_2C_2s+1}}}\tag{4}}
-\Step{6}{إيجاد جهد الخرج}{Output Voltage}
-لأن الخرج مأخوذ على المتسعة $C_1$، والتيار المار فيها $I_1$:
-\M{E_o=V_{C_1}}
-نستخدم قانون:
-\M{V=ZI}
-إذن:
-\M{E_o=Z_{C_1}I_1}
-نعوض عن ممانعة المتسعة:
-\M{\boxed{E_o=\frac{I_1}{C_1s}}\tag{5}}
-نقسم على $E_i$:
-\M{\frac{E_o}{E_i}=\frac{1}{C_1s}\frac{I_1}{E_i}}
-نعوض من المعادلة (4):
-\Q{\frac{E_o}{E_i}=\frac{1}{C_1s}\times\frac{1}{R_1+\frac{1}{C_1s}+\frac{R_2}{R_2C_2s+1}}}
-إذن:
-\Q{\boxed{\frac{E_o}{E_i}=\frac{\frac{1}{C_1s}}{R_1+\frac{1}{C_1s}+\frac{R_2}{R_2C_2s+1}}}}
-\Step{7}{تبسيط دالة الانتقال}{Simplification}
-نضرب البسط والمقام في $C_1s$:
-\M{\frac{E_o}{E_i}=\frac{1}{R_1C_1s+1+\frac{R_2C_1s}{R_2C_2s+1}}}
-لإزالة الكسر الموجود في المقام، نضرب البسط والمقام في $R_2C_2s+1$:
-\Q{\frac{E_o}{E_i}=\frac{R_2C_2s+1}{(R_1C_1s+1)(R_2C_2s+1)+R_2C_1s}}
-نفتح الأقواس:
-\Q{\begin{aligned}&(R_1C_1s+1)(R_2C_2s+1)\\&=R_1R_2C_1C_2s^2+R_1C_1s+R_2C_2s+1\end{aligned}}
-نضيف الحد الموجود خارج الأقواس:
-\Q{\begin{aligned}&=R_1R_2C_1C_2s^2+R_1C_1s\\&\quad+R_2C_2s+R_2C_1s+1\end{aligned}}
-نجمع حدود $s$:
-\Q{=R_1R_2C_1C_2s^2+(R_1C_1+R_2C_2+R_2C_1)s+1}
-\Final{\frac{E_o(s)}{E_i(s)}=\frac{R_2C_2s+1}{R_1R_2C_1C_2s^2+(R_1C_1+R_2C_2+R_2C_1)s+1}}
-\Remember{نكتب معادلتي \textenglish{KVL}، ثم نحذف $I_2$ للحصول على $I_1$، لأن التيار في المتسعة $C_1$ هو $I_1$. بعدها نستخدم $E_o=I_1/(C_1s)$ ونقسم على $E_i$ لاستخراج دالة الانتقال.}
-\Homework{3}
-\textbf{السؤال بالإنجليزي (\textenglish{English}):}
-\begin{LTR}\begin{english}
-Find the transfer function \(\dfrac{I_2(s)}{E_i(s)}\) of the following network.
-\end{english}\end{LTR}
-\textbf{السؤال بالعربي:}
-أوجد دالة الانتقال للدائرة الكهربائية الموضحة في الشكل باستخدام طريقة تحليل تيارات الحلقات (\textenglish{Mesh Analysis}).
-المطلوب:
-\M{\boxed{G(s)=\frac{I_2(s)}{E_i(s)}}}
-تحتوي الدائرة على مقاومتين $R_1,R_2$، ومحث $L$، ومتسعة $C$.
-لاحظ أن المطلوب هذه المرة هو نسبة تيار الحلقة الثانية $I_2$ إلى جهد الدخل $E_i$، وليس جهد الخرج إلى جهد الدخل.
-\begin{center}
-\begin{LTR}
+
+% ---------------------- HOMEWORK 2 ----------------------
+\stepcounter{homework}
+\SectionHead{2}{Mesh Current Analysis}
+\textbf{Question.} Find the transfer function $G(s)=E_o(s)/E_i(s)$ of the circuit shown below.
+\begin{figure}[H]\centering
 \begin{circuitikz}[american,scale=.87,transform shape]
-\draw (0,0) to[sV,l=$E_i$] (0,3) to[R,l=$R_1$] (3.2,3) to[R,l=$R_2$] (6.4,3) to[C,l=$C$] (6.4,0)--(0,0);
-\draw (3.2,3) to[L,l=$L$] (3.2,0);
-\node at (1.6,1.35) {$I_1$};\node at (4.85,1.35) {$I_2$};
+\draw (0,0) to[sV,l_=$E_i$] (0,3) -- (1.2,3) -- (1.2,4.2)
+    to[R,l=$R_2$] (4.6,4.2) -- (4.6,3) -- (6,3)
+    to[R,l=$R_1$] (6,1.6) to[C,l=$C_1$] (6,0) -- (0,0);
+\draw (1.2,3) to[C,l=$C_2$] (4.6,3);
+\node at (2.4,1.5) {$I_1$}; \node[BlueAccent] at (3.95,3.64) {$I_2$};
+\node[BlueAccent] at (7.2,.8) {$E_o$};
+\node[BlueAccent] at (6.7,1.15) {$+$};\node[BlueAccent] at (6.7,.2) {$-$};
+\draw[BlueAccent,thin] (6,1.53)--(6.53,1.53);
+\draw[BlueAccent,thin] (6,0)--(6.53,0);
 \end{circuitikz}
-\end{LTR}
-\end{center}
-\Step{1}{تحديد تيارات الحلقات}{Mesh Currents}
-نفترض تيارين باتجاه عقارب الساعة:
-\begin{itemize}
-\item $I_1$: تيار الحلقة الأولى، التي تحتوي المصدر $E_i$، والمقاومة $R_1$، والمحث $L$.
-\item $I_2$: تيار الحلقة الثانية، التي تحتوي المحث $L$، والمقاومة $R_2$، والمتسعة $C$.
-\end{itemize}
-المحث $L$ مشترك بين الحلقتين، ولذلك تياره باتجاه الحلقة الأولى:
-\M{\boxed{I_L=I_1-I_2}}
-أما باتجاه الحلقة الثانية:
-\M{\boxed{I_L=I_2-I_1}}
-\Step{2}{تحويل العناصر إلى ممانعات}{Impedances}
-\M{Z_{R_1}=R_1\qquad Z_{R_2}=R_2}
-\M{Z_L=Ls\qquad Z_C=\frac{1}{Cs}}
-نستخدم العلاقة:
-\M{\boxed{V=ZI}}
-\Step{3}{تطبيق قانون كيرشوف للجهد على الحلقة الأولى}{KVL / Mesh 1}
-حسب قانون كيرشوف، جهد المصدر يساوي مجموع هبوط الجهد على المقاومة الأولى والمحث:
-\M{E_i=V_{R_1}+V_L}
-نعوض:
-\M{E_i=R_1I_1+Ls(I_1-I_2)}
-نفتح الأقواس:
-\M{E_i=R_1I_1+LsI_1-LsI_2}
-نجمع حدود $I_1$:
-\M{\boxed{(R_1+Ls)I_1-LsI_2=E_i}\tag{1}}
-\Step{4}{تطبيق قانون كيرشوف للجهد على الحلقة الثانية}{KVL / Mesh 2}
-الحلقة الثانية لا تحتوي مصدراً، لذلك:
-\M{V_L+V_{R_2}+V_C=0}
-نعوض:
-\M{Ls(I_2-I_1)+R_2I_2+\frac{I_2}{Cs}=0}
-نفتح الأقواس:
-\M{LsI_2-LsI_1+R_2I_2+\frac{I_2}{Cs}=0}
-نرتب الحدود:
-\M{-LsI_1+LsI_2+R_2I_2+\frac{I_2}{Cs}=0}
-نجمع حدود $I_2$:
-\Q{\boxed{-LsI_1+\left(Ls+R_2+\frac{1}{Cs}\right)I_2=0}\tag{2}}
-الآن لدينا معادلتان بمجهولين $I_1,I_2$.
-\Step{5}{حذف التيار $I_1$}{Elimination}
-نريد استخراج $I_2$، لذلك نحذف $I_1$.
-من المعادلة (2):
-\M{-LsI_1+\left(Ls+R_2+\frac1{Cs}\right)I_2=0}
-ننقل الحد الذي يحتوي $I_1$ إلى الطرف الآخر:
-\M{\left(Ls+R_2+\frac1{Cs}\right)I_2=LsI_1}
-نقسم على $Ls$:
-\M{\boxed{I_1=\frac{Ls+R_2+\frac1{Cs}}{Ls}I_2}\tag{3}}
-نعوض في المعادلة (1):
-\M{(R_1+Ls)I_1-LsI_2=E_i}
-\Q{(R_1+Ls)\left(\frac{Ls+R_2+\frac1{Cs}}{Ls}I_2\right)-LsI_2=E_i}
-نأخذ $I_2$ عاملاً مشتركاً:
-\Q{\left[\frac{(R_1+Ls)(Ls+R_2+\frac1{Cs})}{Ls}-Ls\right]I_2=E_i}
-نوحد المقامات:
-\M{Ls=\frac{L^2s^2}{Ls}}
-إذن:
-\Q{\left[\frac{(R_1+Ls)(Ls+R_2+\frac1{Cs})-L^2s^2}{Ls}\right]I_2=E_i}
-نضرب الطرفين في $Ls$:
-\Q{\left[(R_1+Ls)(Ls+R_2+\frac1{Cs})-L^2s^2\right]I_2=LsE_i}
-نقسم على القوس:
-\Q{I_2=\frac{LsE_i}{(R_1+Ls)(Ls+R_2+\frac1{Cs})-L^2s^2}}
-نقسم على $E_i$:
-\Q{\boxed{\frac{I_2}{E_i}=\frac{Ls}{(R_1+Ls)(Ls+R_2+\frac1{Cs})-L^2s^2}}\tag{4}}
-هذه هي دالة الانتقال قبل التبسيط.
-\Step{6}{تبسيط دالة الانتقال}{Simplification}
-نبدأ بفتح الأقواس في المقام:
-\Q{(R_1+Ls)\left(Ls+R_2+\frac1{Cs}\right)-L^2s^2}
-نضرب كل حد من القوس الأول في حدود القوس الثاني:
-\Q{\begin{aligned}={}&R_1(Ls)+R_1(R_2)+R_1\left(\frac1{Cs}\right)\\&+Ls(Ls)+Ls(R_2)+Ls\left(\frac1{Cs}\right)-L^2s^2\end{aligned}}
-ننفذ عمليات الضرب:
-\Q{\begin{aligned}={}&R_1Ls+R_1R_2+\frac{R_1}{Cs}\\&+L^2s^2+LR_2s+\frac{L}{C}-L^2s^2\end{aligned}}
-نختصر:
-\M{+L^2s^2-L^2s^2=0}
-فتبقى:
-\M{=R_1Ls+R_1R_2+\frac{R_1}{Cs}+LR_2s+\frac{L}{C}}
-نجمع حدود $s$:
-\M{R_1Ls+LR_2s=L(R_1+R_2)s}
-إذن يصبح المقام:
-\M{=L(R_1+R_2)s+R_1R_2+\frac{R_1}{Cs}+\frac{L}{C}}
-نعوض في دالة الانتقال:
-\Q{\frac{I_2}{E_i}=\frac{Ls}{L(R_1+R_2)s+R_1R_2+\frac{R_1}{Cs}+\frac{L}{C}}}
-\Step{7}{إزالة الكسور من المقام}{Algebraic simplification}
-نضرب البسط والمقام في $Cs$:
-\Q{\frac{I_2}{E_i}=\frac{Ls(Cs)}{\left[L(R_1+R_2)s+R_1R_2+\frac{R_1}{Cs}+\frac{L}{C}\right]Cs}}
-نضرب البسط:
-\M{Ls(Cs)=LCs^2}
-نضرب كل حد في المقام:
-\M{L(R_1+R_2)s(Cs)=LC(R_1+R_2)s^2}
-\M{R_1R_2(Cs)=R_1R_2Cs}
-\M{\frac{R_1}{Cs}(Cs)=R_1}
-\M{\frac{L}{C}(Cs)=Ls}
-إذن:
-\Q{\frac{I_2}{E_i}=\frac{LCs^2}{LC(R_1+R_2)s^2+R_1R_2Cs+R_1+Ls}}
-نجمع الحدود التي تحتوي $s$:
-\M{R_1R_2Cs+Ls=(R_1R_2C+L)s}
-ونرتب المقام حسب قوى $s$:
-\Q{\frac{I_2}{E_i}=\frac{LCs^2}{LC(R_1+R_2)s^2+(R_1R_2C+L)s+R_1}}
+\caption{Two-mesh $RC$ circuit; $E_o$ is measured across $C_1$.}
+\end{figure}
+\Heading{1. Laplace-domain impedances}
+\Eqs{
+ Z_{R_1}&=R_1, & Z_{R_2}&=R_2, & Z_{C_1}&=\frac1{C_1s}, & Z_{C_2}&=\frac1{C_2s},\\
+ V(s)&=Z(s)I(s), & I_{C_2}&=I_1-I_2.
+}
+\Heading{2. Mesh 1 (KVL)}
+\Eqs{
+ E_i&=\frac{I_1-I_2}{C_2s}+R_1I_1+\frac{I_1}{C_1s}\\
+ &=\frac{I_1}{C_2s}-\frac{I_2}{C_2s}+R_1I_1+\frac{I_1}{C_1s}\\
+ \boxed{\left(R_1+\frac1{C_1s}+\frac1{C_2s}\right)I_1-\frac{I_2}{C_2s}}&=E_i.\tag{1}
+}
+\Heading{3. Mesh 2 (KVL)}
+\Eqs{
+ 0&=R_2I_2+\frac{I_2-I_1}{C_2s}\\
+ &=R_2I_2+\frac{I_2}{C_2s}-\frac{I_1}{C_2s}\\
+ \boxed{-\frac{I_1}{C_2s}+\left(R_2+\frac1{C_2s}\right)I_2}&=0.\tag{2}
+}
+\clearpage
+\Heading{4. Eliminate $I_2$}
+\Eqs{
+ -I_1+(R_2C_2s+1)I_2&=0\\
+ I_1&=(R_2C_2s+1)I_2\\
+ I_2&=\frac{I_1}{R_2C_2s+1}.
+}
+\Heading{5. Substitute into Mesh 1}
+\Eqs{
+ E_i&=\left(R_1+\frac1{C_1s}+\frac1{C_2s}\right)I_1-\frac{I_2}{C_2s}\\[3pt]
+ &=\left(R_1+\frac1{C_1s}+\frac1{C_2s}\right)I_1-\frac{I_1}{C_2s(R_2C_2s+1)}\\[3pt]
+ &=\left[R_1+\frac1{C_1s}+\frac1{C_2s}-\frac1{C_2s(R_2C_2s+1)}\right]I_1.
+}
+\Eqs{
+ \frac1{C_2s}-\frac1{C_2s(R_2C_2s+1)}
+ &=\frac{R_2C_2s+1-1}{C_2s(R_2C_2s+1)}\\
+ &=\frac{R_2C_2s}{C_2s(R_2C_2s+1)}\\
+ &=\frac{R_2}{R_2C_2s+1}.
+}
+\Eqs{
+ E_i&=\left[R_1+\frac1{C_1s}+\frac{R_2}{R_2C_2s+1}\right]I_1\\[3pt]
+ \frac{I_1}{E_i}&=\frac{1}{R_1+\frac1{C_1s}+\frac{R_2}{R_2C_2s+1}}.
+}
+\clearpage\Heading{6. Output voltage and transfer function}
+\Eqs{
+ E_o&=Z_{C_1}I_1=\frac{I_1}{C_1s}\\
+ \frac{E_o}{E_i}&=\frac1{C_1s}\frac{I_1}{E_i}\\[4pt]
+ &=\frac{\frac1{C_1s}}{R_1+\frac1{C_1s}+\frac{R_2}{R_2C_2s+1}}\\[6pt]
+ &=\frac{1}{R_1C_1s+1+\frac{R_2C_1s}{R_2C_2s+1}}\\[6pt]
+ &=\frac{R_2C_2s+1}{(R_1C_1s+1)(R_2C_2s+1)+R_2C_1s}.
+}
+\Heading{7. Expand denominator}
+\Eqs{
+ &(R_1C_1s+1)(R_2C_2s+1)+R_2C_1s\\
+ &\quad=R_1R_2C_1C_2s^2+R_1C_1s+R_2C_2s+1+R_2C_1s\\
+ &\quad=R_1R_2C_1C_2s^2+(R_1C_1+R_2C_2+R_2C_1)s+1.
+}
+\Final{\frac{E_o(s)}{E_i(s)}=\frac{R_2C_2s+1}{R_1R_2C_1C_2s^2+(R_1C_1+R_2C_2+R_2C_1)s+1}}
+
+% ---------------------- HOMEWORK 3 ----------------------
+\stepcounter{homework}
+\SectionHead{3}{Mesh Current Analysis}
+\textbf{Question.} Find the transfer function $G(s)=I_2(s)/E_i(s)$ of the circuit shown below.
+\begin{figure}[H]\centering
+\begin{circuitikz}[american,scale=.91,transform shape]
+\draw (0,0) to[sV,l_=$E_i$] (0,3) to[R,l=$R_1$] (3.15,3)
+      to[R,l=$R_2$] (6.3,3) to[C,l=$C$] (6.3,0)--(0,0);
+\draw (3.15,3) to[L,l=$L$] (3.15,0);
+\node at (1.6,1.42) {$I_1$};\node at (4.75,1.42) {$I_2$};
+\end{circuitikz}
+\caption{Two-mesh $RLC$ circuit; the requested output is mesh current $I_2$.}
+\end{figure}
+\Heading{1. Laplace-domain impedances}
+\Eqs{
+ Z_{R_1}&=R_1, & Z_{R_2}&=R_2, & Z_L&=Ls, & Z_C&=\frac1{Cs},\\
+ V(s)&=Z(s)I(s), & I_L&=I_1-I_2.
+}
+\Heading{2. Mesh 1 (KVL)}
+\Eqs{
+ E_i&=R_1I_1+Ls(I_1-I_2)\\
+ &=R_1I_1+LsI_1-LsI_2\\
+ \boxed{(R_1+Ls)I_1-LsI_2}&=E_i.\tag{1}
+}
+\Heading{3. Mesh 2 (KVL)}
+\Eqs{
+ 0&=Ls(I_2-I_1)+R_2I_2+\frac{I_2}{Cs}\\
+ &=LsI_2-LsI_1+R_2I_2+\frac{I_2}{Cs}\\
+ \boxed{-LsI_1+\left(Ls+R_2+\frac1{Cs}\right)I_2}&=0.\tag{2}
+}
+\Heading{4. Eliminate $I_1$}
+\Eqs{
+ LsI_1&=\left(Ls+R_2+\frac1{Cs}\right)I_2\\
+ I_1&=\frac{Ls+R_2+\frac1{Cs}}{Ls}I_2.
+}
+\clearpage
+\Heading{5. Substitute into Mesh 1}
+\Eqs{
+ E_i&=(R_1+Ls)\left(\frac{Ls+R_2+\frac1{Cs}}{Ls}\right)I_2-LsI_2\\[3pt]
+ &=\left[\frac{(R_1+Ls)(Ls+R_2+\frac1{Cs})}{Ls}-Ls\right]I_2\\[3pt]
+ &=\left[\frac{(R_1+Ls)(Ls+R_2+\frac1{Cs})-L^2s^2}{Ls}\right]I_2.
+}
+\Eqs{
+ \frac{I_2}{E_i}&=\frac{Ls}{(R_1+Ls)(Ls+R_2+\frac1{Cs})-L^2s^2}.
+}
+\Heading{6. Expand the denominator}
+\Eqs{
+ D(s)&=(R_1+Ls)\left(Ls+R_2+\frac1{Cs}\right)-L^2s^2\\
+ &=R_1Ls+R_1R_2+\frac{R_1}{Cs}+L^2s^2+LR_2s+\frac{L}{C}-L^2s^2\\
+ &=L(R_1+R_2)s+R_1R_2+\frac{R_1}{Cs}+\frac{L}{C}.
+}
+\Heading{7. Clear fractions and collect terms}
+\Eqs{
+ \frac{I_2}{E_i}&=\frac{Ls}{L(R_1+R_2)s+R_1R_2+\frac{R_1}{Cs}+\frac{L}{C}}\\[5pt]
+ &=\frac{Ls(Cs)}{\left[L(R_1+R_2)s+R_1R_2+\frac{R_1}{Cs}+\frac{L}{C}\right](Cs)}\\[5pt]
+ &=\frac{LCs^2}{LC(R_1+R_2)s^2+R_1R_2Cs+R_1+Ls}\\[5pt]
+ &=\frac{LCs^2}{(R_1+R_2)LCs^2+(R_1R_2C+L)s+R_1}.
+}
 \Final{\frac{I_2(s)}{E_i(s)}=\frac{LCs^2}{(R_1+R_2)LCs^2+(R_1R_2C+L)s+R_1}}
-\Remember{نكتب معادلتي \textenglish{KVL} للحلقتين، ثم نحذف $I_1$ حتى نحصل على $I_2$ بدلالة $E_i$. في هذا الواجب لا نحتاج إلى حساب جهد الخرج $E_o$، لأن المطلوب هو $I_2/E_i$ مباشرة. لذلك نستخرج النسبة ونبسطها للحصول على دالة الانتقال النهائية.}
 \end{document}
