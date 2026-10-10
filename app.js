@@ -84,7 +84,7 @@ function stepHTML(s,i){
 }
 function renderStep(){
  const l=lessons[selected],host=$("stepsHost");
- if(showAll){host.innerHTML='<div class="all-steps">'+l.steps.map(stepHTML).join("</div><div style='height:10px'></div><div>")+'</div>';}
+ if(showAll){host.innerHTML='<div class="all-steps">'+l.steps.map(stepHTML).join('<div style="height:10px"></div>')+'</div>';}
  else host.innerHTML=stepHTML(l.steps[step],step);
  $("stepNumber").textContent=(showAll?"الكل":(step+1)+" / "+l.steps.length);
  $("stepProgress").style.width=(showAll?100:(step+1)/l.steps.length*100)+"%";
