@@ -8,7 +8,9 @@
   \setmainfont{P052}[Ligatures=TeX] % Palatino-compatible font on Linux
 }
 \setsansfont{DejaVu Sans}
-\usepackage{mathpazo}
+% Modern OpenType math; avoid conflicting legacy Type-1 mathpazo font metrics.
+\usepackage{unicode-math}
+\setmathfont{Latin Modern Math}
 \usepackage[margin=22mm,top=24mm,bottom=22mm,headheight=14pt]{geometry}
 \usepackage{amsmath,mathtools,booktabs,enumitem,microtype}
 \usepackage{tikz,circuitikz}
