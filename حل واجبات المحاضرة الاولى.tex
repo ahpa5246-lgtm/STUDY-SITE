@@ -133,27 +133,60 @@ Date & \today\\
 \clearpage
 \Heading{4. Eliminate $I_1$}
 \Eqs{
- RI_1&=\left(R+L_2s+\frac{1}{Cs}\right)I_2\\
- I_1&=\frac{R+L_2s+\frac{1}{Cs}}{R}I_2\\[3pt]
- (L_1s+R)\left(\frac{R+L_2s+\frac1{Cs}}{R}\right)I_2-RI_2&=V_i\\[3pt]
- \left[\frac{(L_1s+R)(R+L_2s+\frac1{Cs})}{R}-R\right]I_2&=V_i.
+ -RI_1+\left(R+L_2s+\frac{1}{Cs}\right)I_2&=0\\
+ -RI_1&=-\left(R+L_2s+\frac{1}{Cs}\right)I_2\\
+ RI_1&=\left(R+L_2s+\frac{1}{Cs}\right)I_2\\[2pt]
+ I_1&=\frac{R+L_2s+\frac{1}{Cs}}{R}\,I_2.
+}
+\Eqs{
+ V_i&=(L_1s+R)I_1-RI_2\\[2pt]
+ &=(L_1s+R)\left(\frac{R+L_2s+\frac1{Cs}}{R}I_2\right)-RI_2\\[3pt]
+ &=\frac{(L_1s+R)(R+L_2s+\frac1{Cs})}{R}I_2-RI_2\\[3pt]
+ &=\left[\frac{(L_1s+R)(R+L_2s+\frac1{Cs})}{R}-R\right]I_2.
 }
 \Heading{5. Current ratio and output voltage}
 \Eqs{
- \left[\frac{(L_1s+R)(R+L_2s+\frac1{Cs})-R^2}{R}\right]I_2&=V_i\\[3pt]
- \frac{I_2}{V_i}&=\frac{R}{(L_1s+R)(R+L_2s+\frac1{Cs})-R^2}\\[4pt]
- V_o&=Z_{L_2}I_2=L_2sI_2\\
- \frac{V_o}{V_i}&=L_2s\frac{I_2}{V_i}\\[4pt]
+ R&=\frac{R^2}{R}\\[2pt]
+ V_i&=\left[\frac{(L_1s+R)(R+L_2s+\frac1{Cs})-R^2}{R}\right]I_2\\[4pt]
+ RV_i&=\left[(L_1s+R)(R+L_2s+\frac1{Cs})-R^2\right]I_2.
+}
+\Eqs{
+ I_2&=\frac{RV_i}{(L_1s+R)(R+L_2s+\frac1{Cs})-R^2}\\[5pt]
+ \frac{I_2}{V_i}&=\frac{R}{(L_1s+R)(R+L_2s+\frac1{Cs})-R^2}.
+}
+\Eqs{
+ V_o&=Z_{L_2}I_2\\
+ &=L_2sI_2\\
+ \frac{V_o}{V_i}&=\frac{L_2sI_2}{V_i}\\
+ &=L_2s\frac{I_2}{V_i}\\[4pt]
+ &=L_2s\left[\frac{R}{(L_1s+R)(R+L_2s+\frac1{Cs})-R^2}\right]\\[4pt]
  &=\frac{RL_2s}{(L_1s+R)(R+L_2s+\frac1{Cs})-R^2}.
 }
-\Heading{6. Expand and simplify}
+\clearpage\Heading{6. Expand and simplify}
 \Eqs{
  D(s)&=(L_1s+R)\left(R+L_2s+\frac1{Cs}\right)-R^2\\
- &=L_1Rs+L_1L_2s^2+\frac{L_1}{C}+R^2+RL_2s+\frac{R}{Cs}-R^2\\
- &=L_1L_2s^2+R(L_1+L_2)s+\frac{L_1}{C}+\frac{R}{Cs}\\[3pt]
- \frac{V_o}{V_i}&=\frac{RL_2s}{L_1L_2s^2+R(L_1+L_2)s+\frac{L_1}{C}+\frac{R}{Cs}}\\[5pt]
- &=\frac{RL_2s\,(Cs)}{\left[L_1L_2s^2+R(L_1+L_2)s+\frac{L_1}{C}+\frac{R}{Cs}\right](Cs)}\\[5pt]
- &=\frac{RL_2Cs^2}{L_1L_2Cs^3+RC(L_1+L_2)s^2+L_1s+R}.
+ &=L_1s\left(R+L_2s+\frac1{Cs}\right)
+   +R\left(R+L_2s+\frac1{Cs}\right)-R^2\\
+ &=L_1Rs+L_1L_2s^2+\frac{L_1}{C}
+   +R^2+RL_2s+\frac{R}{Cs}-R^2\\
+ &=L_1Rs+RL_2s+L_1L_2s^2+\frac{L_1}{C}+\frac{R}{Cs}\\
+ &=L_1L_2s^2+R(L_1+L_2)s+\frac{L_1}{C}+\frac{R}{Cs}.
+}
+\Eqs{
+ \frac{V_o}{V_i}
+ &=\frac{RL_2s}{L_1L_2s^2+R(L_1+L_2)s+\frac{L_1}{C}+\frac{R}{Cs}}\\[5pt]
+ &=\frac{RL_2s\cdot Cs}{\bigl[L_1L_2s^2+R(L_1+L_2)s+\frac{L_1}{C}+\frac{R}{Cs}\bigr]Cs}.
+}
+\Eqs{
+ RL_2s\cdot Cs&=RL_2Cs^2\\
+ L_1L_2s^2\cdot Cs&=L_1L_2Cs^3\\
+ R(L_1+L_2)s\cdot Cs&=RC(L_1+L_2)s^2\\
+ \frac{L_1}{C}\cdot Cs&=L_1s\\
+ \frac{R}{Cs}\cdot Cs&=R.
+}
+\Eqs{
+ \frac{V_o}{V_i}&=\frac{RL_2Cs^2}{L_1L_2Cs^3+RC(L_1+L_2)s^2+L_1s+R}\\[5pt]
+ &=\frac{L_2Cs^2}{\frac{L_1L_2C}{R}s^3+(L_1+L_2)Cs^2+\frac{L_1}{R}s+1}.
 }
 \Final{\frac{V_o(s)}{V_i(s)}=\frac{L_2Cs^2}{\frac{L_1L_2C}{R}s^3+(L_1+L_2)Cs^2+\frac{L_1}{R}s+1}}
 
@@ -195,39 +228,59 @@ Date & \today\\
 \clearpage
 \Heading{4. Eliminate $I_2$}
 \Eqs{
- -I_1+(R_2C_2s+1)I_2&=0\\
- I_1&=(R_2C_2s+1)I_2\\
+ -\frac{I_1}{C_2s}+\left(R_2+\frac1{C_2s}\right)I_2&=0\\[3pt]
+ -I_1+\left(R_2C_2s+1\right)I_2&=0\\
+ I_1&=\left(R_2C_2s+1\right)I_2\\[2pt]
+ \frac{I_1}{R_2C_2s+1}&=I_2\\[3pt]
  I_2&=\frac{I_1}{R_2C_2s+1}.
 }
 \Heading{5. Substitute into Mesh 1}
 \Eqs{
  E_i&=\left(R_1+\frac1{C_1s}+\frac1{C_2s}\right)I_1-\frac{I_2}{C_2s}\\[3pt]
- &=\left(R_1+\frac1{C_1s}+\frac1{C_2s}\right)I_1-\frac{I_1}{C_2s(R_2C_2s+1)}\\[3pt]
- &=\left[R_1+\frac1{C_1s}+\frac1{C_2s}-\frac1{C_2s(R_2C_2s+1)}\right]I_1.
+ &=\left(R_1+\frac1{C_1s}+\frac1{C_2s}\right)I_1
+    -\frac1{C_2s}\left(\frac{I_1}{R_2C_2s+1}\right)\\[4pt]
+ &=\left[R_1+\frac1{C_1s}+\frac1{C_2s}
+    -\frac1{C_2s(R_2C_2s+1)}\right]I_1.
 }
 \Eqs{
  \frac1{C_2s}-\frac1{C_2s(R_2C_2s+1)}
- &=\frac{R_2C_2s+1-1}{C_2s(R_2C_2s+1)}\\
- &=\frac{R_2C_2s}{C_2s(R_2C_2s+1)}\\
+ &=\frac{R_2C_2s+1}{C_2s(R_2C_2s+1)}
+   -\frac1{C_2s(R_2C_2s+1)}\\[4pt]
+ &=\frac{R_2C_2s+1-1}{C_2s(R_2C_2s+1)}\\[4pt]
+ &=\frac{R_2C_2s}{C_2s(R_2C_2s+1)}\\[4pt]
  &=\frac{R_2}{R_2C_2s+1}.
 }
 \Eqs{
- E_i&=\left[R_1+\frac1{C_1s}+\frac{R_2}{R_2C_2s+1}\right]I_1\\[3pt]
+ E_i&=\left[R_1+\frac1{C_1s}+\frac{R_2}{R_2C_2s+1}\right]I_1\\[4pt]
+ \frac{E_i}{I_1}&=R_1+\frac1{C_1s}+\frac{R_2}{R_2C_2s+1}\\[4pt]
  \frac{I_1}{E_i}&=\frac{1}{R_1+\frac1{C_1s}+\frac{R_2}{R_2C_2s+1}}.
 }
 \clearpage\Heading{6. Output voltage and transfer function}
 \Eqs{
- E_o&=Z_{C_1}I_1=\frac{I_1}{C_1s}\\
- \frac{E_o}{E_i}&=\frac1{C_1s}\frac{I_1}{E_i}\\[4pt]
- &=\frac{\frac1{C_1s}}{R_1+\frac1{C_1s}+\frac{R_2}{R_2C_2s+1}}\\[6pt]
- &=\frac{1}{R_1C_1s+1+\frac{R_2C_1s}{R_2C_2s+1}}\\[6pt]
+ E_o&=Z_{C_1}I_1\\
+ &=\frac{I_1}{C_1s}\\
+ \frac{E_o}{E_i}&=\frac{I_1}{C_1sE_i}\\
+ &=\frac1{C_1s}\frac{I_1}{E_i}\\[4pt]
+ &=\frac1{C_1s}\left[\frac1{R_1+\frac1{C_1s}+\frac{R_2}{R_2C_2s+1}}\right]\\[5pt]
+ &=\frac{\frac1{C_1s}}{R_1+\frac1{C_1s}+\frac{R_2}{R_2C_2s+1}}.
+}
+\Eqs{
+ \frac{E_o}{E_i}
+ &=\frac{1}{C_1s\left(R_1+\frac1{C_1s}+\frac{R_2}{R_2C_2s+1}\right)}\\[5pt]
+ &=\frac{1}{R_1C_1s+1+\frac{R_2C_1s}{R_2C_2s+1}}\\[5pt]
  &=\frac{R_2C_2s+1}{(R_1C_1s+1)(R_2C_2s+1)+R_2C_1s}.
 }
 \Heading{7. Expand denominator}
 \Eqs{
- &(R_1C_1s+1)(R_2C_2s+1)+R_2C_1s\\
- &\quad=R_1R_2C_1C_2s^2+R_1C_1s+R_2C_2s+1+R_2C_1s\\
- &\quad=R_1R_2C_1C_2s^2+(R_1C_1+R_2C_2+R_2C_1)s+1.
+ D(s)&=(R_1C_1s+1)(R_2C_2s+1)+R_2C_1s\\
+ &=R_1C_1s(R_2C_2s+1)+1(R_2C_2s+1)+R_2C_1s\\
+ &=R_1R_2C_1C_2s^2+R_1C_1s+R_2C_2s+1+R_2C_1s\\
+ &=R_1R_2C_1C_2s^2+(R_1C_1+R_2C_2+R_2C_1)s+1.
+}
+\Eqs{
+ \frac{E_o}{E_i}
+ &=\frac{R_2C_2s+1}{D(s)}\\[3pt]
+ &=\frac{R_2C_2s+1}{R_1R_2C_1C_2s^2+(R_1C_1+R_2C_2+R_2C_1)s+1}.
 }
 \Final{\frac{E_o(s)}{E_i(s)}=\frac{R_2C_2s+1}{R_1R_2C_1C_2s^2+(R_1C_1+R_2C_2+R_2C_1)s+1}}
 
@@ -263,29 +316,51 @@ Date & \today\\
 }
 \Heading{4. Eliminate $I_1$}
 \Eqs{
- LsI_1&=\left(Ls+R_2+\frac1{Cs}\right)I_2\\
+ -LsI_1+\left(Ls+R_2+\frac1{Cs}\right)I_2&=0\\
+ -LsI_1&=-\left(Ls+R_2+\frac1{Cs}\right)I_2\\
+ LsI_1&=\left(Ls+R_2+\frac1{Cs}\right)I_2\\[3pt]
  I_1&=\frac{Ls+R_2+\frac1{Cs}}{Ls}I_2.
 }
 \clearpage
 \Heading{5. Substitute into Mesh 1}
 \Eqs{
- E_i&=(R_1+Ls)\left(\frac{Ls+R_2+\frac1{Cs}}{Ls}\right)I_2-LsI_2\\[3pt]
- &=\left[\frac{(R_1+Ls)(Ls+R_2+\frac1{Cs})}{Ls}-Ls\right]I_2\\[3pt]
+ E_i&=(R_1+Ls)I_1-LsI_2\\[2pt]
+ &=(R_1+Ls)\left(\frac{Ls+R_2+\frac1{Cs}}{Ls}I_2\right)-LsI_2\\[3pt]
+ &=\left[\frac{(R_1+Ls)(Ls+R_2+\frac1{Cs})}{Ls}-Ls\right]I_2.
+}
+\Eqs{
+ Ls&=\frac{L^2s^2}{Ls}\\[3pt]
+ E_i&=\left[\frac{(R_1+Ls)(Ls+R_2+\frac1{Cs})}{Ls}-\frac{L^2s^2}{Ls}\right]I_2\\[4pt]
  &=\left[\frac{(R_1+Ls)(Ls+R_2+\frac1{Cs})-L^2s^2}{Ls}\right]I_2.
 }
 \Eqs{
+ LsE_i&=\left[(R_1+Ls)(Ls+R_2+\frac1{Cs})-L^2s^2\right]I_2\\[4pt]
+ I_2&=\frac{LsE_i}{(R_1+Ls)(Ls+R_2+\frac1{Cs})-L^2s^2}\\[5pt]
  \frac{I_2}{E_i}&=\frac{Ls}{(R_1+Ls)(Ls+R_2+\frac1{Cs})-L^2s^2}.
 }
 \Heading{6. Expand the denominator}
 \Eqs{
  D(s)&=(R_1+Ls)\left(Ls+R_2+\frac1{Cs}\right)-L^2s^2\\
+ &=R_1\left(Ls+R_2+\frac1{Cs}\right)
+   +Ls\left(Ls+R_2+\frac1{Cs}\right)-L^2s^2\\
  &=R_1Ls+R_1R_2+\frac{R_1}{Cs}+L^2s^2+LR_2s+\frac{L}{C}-L^2s^2\\
+ &=R_1Ls+R_1R_2+\frac{R_1}{Cs}+LR_2s+\frac{L}{C}\\
  &=L(R_1+R_2)s+R_1R_2+\frac{R_1}{Cs}+\frac{L}{C}.
 }
-\Heading{7. Clear fractions and collect terms}
+\clearpage\Heading{7. Clear fractions and collect terms}
 \Eqs{
  \frac{I_2}{E_i}&=\frac{Ls}{L(R_1+R_2)s+R_1R_2+\frac{R_1}{Cs}+\frac{L}{C}}\\[5pt]
- &=\frac{Ls(Cs)}{\left[L(R_1+R_2)s+R_1R_2+\frac{R_1}{Cs}+\frac{L}{C}\right](Cs)}\\[5pt]
+ &=\frac{Ls\cdot Cs}{\bigl[L(R_1+R_2)s+R_1R_2+\frac{R_1}{Cs}+\frac{L}{C}\bigr]Cs}.
+}
+\Eqs{
+ Ls\cdot Cs&=LCs^2\\
+ L(R_1+R_2)s\cdot Cs&=LC(R_1+R_2)s^2\\
+ R_1R_2\cdot Cs&=R_1R_2Cs\\
+ \frac{R_1}{Cs}\cdot Cs&=R_1\\
+ \frac{L}{C}\cdot Cs&=Ls.
+}
+\Eqs{
+ \frac{I_2}{E_i}
  &=\frac{LCs^2}{LC(R_1+R_2)s^2+R_1R_2Cs+R_1+Ls}\\[5pt]
  &=\frac{LCs^2}{(R_1+R_2)LCs^2+(R_1R_2C+L)s+R_1}.
 }
