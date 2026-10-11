@@ -22,8 +22,8 @@ jobs:
           sudo apt-get update -qq
           sudo apt-get install -y --no-install-recommends \
             texlive-luatex texlive-latex-extra texlive-latex-recommended \
-            texlive-pictures texlive-fonts-recommended \
-            fonts-urw-base35 fonts-dejavu-core poppler-utils
+            texlive-pictures texlive-fonts-recommended texlive-math-extra \
+            fonts-urw-base35 fonts-dejavu-core poppler-utils ghostscript
 
       - name: Compile report using LuaLaTeX
         shell: bash
@@ -34,18 +34,28 @@ jobs:
           lualatex -interaction=nonstopmode -halt-on-error \
             -jobname=hw_vector "حل واجبات المحاضرة الاولى.tex"
 
-      - name: Export clean English vector PDFs
+      - name: Export viewer-safe outlined PDFs and searchable original
         shell: bash
         run: |
           set -euo pipefail
-          cp hw_vector.pdf "حل واجبات المحاضرة الاولى.pdf"
           cp hw_vector.pdf "حل واجبات المحاضرة الاولى - نسخة نصية.pdf"
-          cp hw_vector.pdf "Control_Theory_Lecture_2_Homework.pdf"
-          pdfinfo "Control_Theory_Lecture_2_Homework.pdf" | awk '$1 == "Pages:" { pages=$2 } END { if (pages < 6) exit 1; print "Verified pages:", pages }'
-          pdftotext -layout "Control_Theory_Lecture_2_Homework.pdf" - \
+          gs -q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite \
+            -dNoOutputFonts -dCompatibilityLevel=1.7 \
+            -dPDFSETTINGS=/prepress \
+            -sOutputFile="Control_Theory_Lecture_2_Homework.pdf" \
+            hw_vector.pdf
+          cp "Control_Theory_Lecture_2_Homework.pdf" "حل واجبات المحاضرة الاولى.pdf"
+          test -s "Control_Theory_Lecture_2_Homework.pdf"
+          pdfinfo "Control_Theory_Lecture_2_Homework.pdf" | awk \
+            '$1 == "Pages:" { pages=$2 } END { if (pages < 6) exit 1; print "Verified pages:", pages }'
+          pdftotext -layout "حل واجبات المحاضرة الاولى - نسخة نصية.pdf" - \
             | grep -q 'MIDDLE TECHNICAL UNIVERSITY'
-          if pdftotext "Control_Theory_Lecture_2_Homework.pdf" - | grep -Pq '[\x{0600}-\x{06FF}]'; then
+          if pdftotext "حل واجبات المحاضرة الاولى - نسخة نصية.pdf" - | grep -Pq '[\x{0600}-\x{06FF}]'; then
             echo "Unexpected Arabic script in English PDF" >&2
+            exit 1
+          fi
+          if [ "$(pdffonts 'Control_Theory_Lecture_2_Homework.pdf' | wc -l)" -ne 2 ]; then
+            echo "Viewer-safe PDF must contain no font objects" >&2
             exit 1
           fi
 
@@ -58,6 +68,6 @@ jobs:
                   "حل واجبات المحاضرة الاولى - نسخة نصية.pdf" \
                   "Control_Theory_Lecture_2_Homework.pdf"
           if ! git diff --staged --quiet; then
-            git commit -m "Rebuild all-English homework report with LuaLaTeX"
+            git commit -m "Publish stable outlined PDF and searchable OpenType edition"
             git push
           fi
