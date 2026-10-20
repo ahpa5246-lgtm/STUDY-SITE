@@ -390,7 +390,7 @@ def graphical_app(store: AuthStore) -> None:
     root.geometry("950x680")
     root.minsize(720, 600)
     root.configure(bg="#0b1324")
-    root.option_add("*Font", "Segoe UI 10")
+    root.option_add("*Font", "Arial 10")
 
     C = {"bg": "#0b1324", "panel": "#111d33", "field": "#182941",
          "muted": "#96a9c1", "white": "#f3f7ff", "accent": "#65e4c3",
@@ -403,11 +403,11 @@ def graphical_app(store: AuthStore) -> None:
         for child in outer.winfo_children():
             child.destroy()
         tk.Label(outer, text="ACCESS  /  LAB", fg=C["accent"], bg=C["bg"],
-                 font=("Segoe UI", 12, "bold")).pack(anchor="w")
+                 font=("Arial", 12, "bold")).pack(anchor="w")
         tk.Label(outer, text="Authentication System", fg=C["white"], bg=C["bg"],
-                 font=("Segoe UI", 29, "bold")).pack(anchor="w", pady=(4, 0))
+                 font=("Arial", 29, "bold")).pack(anchor="w", pady=(4, 0))
         tk.Label(outer, text="A real local implementation of your Python homework.",
-                 fg=C["muted"], bg=C["bg"], font=("Segoe UI", 11)).pack(anchor="w", pady=(2, 22))
+                 fg=C["muted"], bg=C["bg"], font=("Arial", 11)).pack(anchor="w", pady=(2, 22))
         card = tk.Frame(outer, bg=C["panel"], highlightthickness=1,
                         highlightbackground=C["line"], padx=33, pady=25)
         card.pack(fill="both", expand=True)
@@ -415,16 +415,16 @@ def graphical_app(store: AuthStore) -> None:
 
     def heading(card: tk.Frame, title: str, subtitle: str) -> None:
         tk.Label(card, text=title, fg=C["white"], bg=C["panel"],
-                 font=("Segoe UI", 19, "bold")).pack(anchor="w")
+                 font=("Arial", 19, "bold")).pack(anchor="w")
         tk.Label(card, text=subtitle, fg=C["muted"], bg=C["panel"],
                  wraplength=690, justify="left").pack(anchor="w", pady=(3, 17))
 
     def field(card: tk.Frame, title: str, secret: bool = False) -> tk.Entry:
         tk.Label(card, text=title, fg=C["muted"], bg=C["panel"],
-                 font=("Segoe UI", 10, "bold")).pack(anchor="w", pady=(8, 3))
+                 font=("Arial", 10, "bold")).pack(anchor="w", pady=(8, 3))
         entry = tk.Entry(card, bg=C["field"], fg=C["white"],
                          insertbackground=C["white"], relief="flat", bd=0,
-                         font=("Segoe UI", 13), show="•" if secret else "")
+                         font=("Arial", 13), show="•" if secret else "")
         entry.pack(fill="x", ipady=9)
         if secret:
             visible = tk.BooleanVar(value=False)
@@ -442,7 +442,7 @@ def graphical_app(store: AuthStore) -> None:
                   activebackground="#8aefd4" if primary else C["line"],
                   activeforeground=C["bg"] if primary else C["white"],
                   relief="flat", bd=0, padx=16, pady=9, cursor="hand2",
-                  font=("Segoe UI", 11, "bold")).pack(fill="x", pady=(10, 0))
+                  font=("Arial", 11, "bold")).pack(fill="x", pady=(10, 0))
 
     def status(card: tk.Frame) -> tk.Label:
         label = tk.Label(card, text="", bg=C["panel"], fg=C["red"],
@@ -566,9 +566,9 @@ def graphical_app(store: AuthStore) -> None:
         for title, value in (("USER ID", info["username"]), ("ACCOUNT CREATED", info["created"]),
                              ("LAST LOGIN (UTC)", info["last_login"] or "Not available")):
             tk.Label(card, text=f"{title}     {value}", fg=C["white"], bg=C["panel"],
-                     font=("Segoe UI", 11)).pack(anchor="w", pady=(2, 5))
+                     font=("Arial", 11)).pack(anchor="w", pady=(2, 5))
         tk.Label(card, text="RECENT SECURITY ACTIVITY", fg=C["accent"], bg=C["panel"],
-                 font=("Segoe UI", 10, "bold")).pack(anchor="w", pady=(17, 5))
+                 font=("Arial", 10, "bold")).pack(anchor="w", pady=(17, 5))
         for action, when in store.activity(active_user, 5):
             tk.Label(card, text=f"{when}   /   {action}", fg=C["muted"],
                      bg=C["panel"], font=("Consolas", 9)).pack(anchor="w")
