@@ -1,39 +1,5 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""STUDY-SITE / Authentication Homework — all application code in ONE Python file.
-
-A working, offline desktop authentication application (Tkinter + SQLite).
-No pip packages, cloud account, API key, or server required.
-
-QUICK START
-    python authentication_system.py                # GUI (if display available)
-    python authentication_system.py --cli          # interactive terminal UI
-    python authentication_system.py --demo         # automatic correct/wrong login
-    python authentication_system.py --self-test    # run built-in security tests
-    python authentication_system.py --db ./my.sqlite3 --cli
-
-The SQLite database is created when first needed at:
-    ~/.study_site_auth/accounts.sqlite3
-This is a separate *data* file; every line of application and test code is here.
-
-HOMEWORK CONTRACT
-    Correct username + password -> "Grant Access"
-    Incorrect credentials       -> "Wrong Credentials"
-
-Security choices:
-- Passwords are salted, memory-hard scrypt hashes; never stored in plaintext.
-- SQL always uses bound parameters; usernames are unique case-insensitively.
-- Failed logins are limited with a temporary account lockout.
-- Password resets require a strong one-time recovery code issued at registration.
-- Changing a password requires the current password.
-- Generic authentication errors avoid revealing if a username exists.
-- Local audit trail excludes passwords and recovery codes.
-- No default administrator, hardcoded user, internet access, or insecure reset.
-
-This is a locally stored desktop program, NOT a remote/web identity provider.
-A production internet-facing service additionally needs a trusted backend, TLS,
-server-side sessions, abuse protection, verified recovery, backups, and monitoring.
-"""
 
 from __future__ import annotations
 
