@@ -1,5 +1,39 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+"""STUDY-SITE / Authentication Homework — all application code in ONE Python file.
+
+A working, offline desktop authentication application (Tkinter + SQLite).
+No pip packages, cloud account, API key, or server required.
+
+QUICK START
+    python authentication_system.py                # GUI (if display available)
+    python authentication_system.py --cli          # interactive terminal UI
+    python authentication_system.py --demo         # automatic correct/wrong login
+    python authentication_system.py --self-test    # run built-in security tests
+    python authentication_system.py --db ./my.sqlite3 --cli
+
+The SQLite database is created when first needed at:
+    ~/.study_site_auth/accounts.sqlite3
+This is a separate *data* file; every line of application and test code is here.
+
+HOMEWORK CONTRACT
+    Correct username + password -> "Grant Access"
+    Incorrect credentials       -> "Wrong Credentials"
+
+Security choices:
+- Passwords are salted, memory-hard scrypt hashes; never stored in plaintext.
+- SQL always uses bound parameters; usernames are unique case-insensitively.
+- Failed logins are limited with a temporary account lockout.
+- Password resets require a strong one-time recovery code issued at registration.
+- Changing a password requires the current password.
+- Generic authentication errors avoid revealing if a username exists.
+- Local audit trail excludes passwords and recovery codes.
+- No default administrator, hardcoded user, internet access, or insecure reset.
+
+This is a locally stored desktop program, NOT a remote/web identity provider.
+A production internet-facing service additionally needs a trusted backend, TLS,
+server-side sessions, abuse protection, verified recovery, backups, and monitoring.
+"""
 
 from __future__ import annotations
 
@@ -348,100 +382,245 @@ def terminal_app(store: AuthStore) -> None:
 
 
 def graphical_app(store: AuthStore) -> None:
+    """Responsive, self-contained Tkinter GUI; no pip dependencies or external assets.
+
+    Visual architecture follows modern documented widget/layout patterns, while
+    keeping the SQLite-backed authentication logic untouched.
+    """
     import tkinter as tk
     from tkinter import messagebox
 
+    P = {
+        "ink": "#0C1426", "hero": "#0D1527", "hero_panel": "#14233A",
+        "mint": "#52DBB9", "mint_hover": "#42CCA9", "mint_dark": "#06745D",
+        "hero_text": "#F7FAFF", "hero_muted": "#94A5BB",
+        "canvas_line": "#1E314B", "back": "#F5F7FB", "white": "#FFFFFF",
+        "text": "#172238", "muted": "#77839A", "border": "#DDE4EE",
+        "field": "#F8FAFD", "red": "#B84B55", "red_back": "#FFF0F1",
+        "green_back": "#E8F8F0", "button_dark": "#112037",
+    }
+    FONT = "Segoe UI" if sys.platform == "win32" else "DejaVu Sans"
+    FONT_MONO = "Consolas" if sys.platform == "win32" else "DejaVu Sans Mono"
     root = tk.Tk()
     root.title(APP_TITLE)
-    root.geometry("950x680")
-    root.minsize(720, 600)
-    root.configure(bg="#0b1324")
-    root.option_add("*Font", "Arial 10")
-
-    C = {"bg": "#0b1324", "panel": "#111d33", "field": "#182941",
-         "muted": "#96a9c1", "white": "#f3f7ff", "accent": "#65e4c3",
-         "line": "#293e59", "red": "#ff8e99", "gold": "#fad695"}
+    root.geometry("1160x750")
+    root.minsize(930, 670)
+    root.configure(bg=P["back"])
+    root.grid_columnconfigure(0, weight=43, uniform="page")
+    root.grid_columnconfigure(1, weight=57, uniform="page")
+    root.grid_rowconfigure(0, weight=1)
+    # Keep the Windows and Linux scaling behavior reasonable.
+    root.option_add("*Font", f"{{{FONT}}} 10")
     active_user: Optional[str] = None
-    outer = tk.Frame(root, bg=C["bg"])
-    outer.pack(fill="both", expand=True, padx=35, pady=23)
+    hero = tk.Canvas(root, bg=P["hero"], borderwidth=0, highlightthickness=0)
+    hero.grid(row=0, column=0, sticky="nsew")
+    content = tk.Frame(root, bg=P["back"])
+    content.grid(row=0, column=1, sticky="nsew")
 
-    def clear() -> tk.Frame:
-        for child in outer.winfo_children():
-            child.destroy()
-        tk.Label(outer, text="ACCESS  /  LAB", fg=C["accent"], bg=C["bg"],
-                 font=("Arial", 12, "bold")).pack(anchor="w")
-        tk.Label(outer, text="Authentication System", fg=C["white"], bg=C["bg"],
-                 font=("Arial", 29, "bold")).pack(anchor="w", pady=(4, 0))
-        tk.Label(outer, text="A real local implementation of your Python homework.",
-                 fg=C["muted"], bg=C["bg"], font=("Arial", 11)).pack(anchor="w", pady=(2, 22))
-        card = tk.Frame(outer, bg=C["panel"], highlightthickness=1,
-                        highlightbackground=C["line"], padx=33, pady=25)
-        card.pack(fill="both", expand=True)
-        return card
+    def hero_draw(event: object = None) -> None:
+        """Subtle geometric graphic; drawn from code, not an image download."""
+        w, h = hero.winfo_width(), hero.winfo_height()
+        if w < 10 or h < 10:
+            return
+        hero.delete("all")
+        hero.create_rectangle(0, 0, w, h, fill=P["hero"], outline="")
+        for dx in range(40, w, 29):
+            for dy in range(245, h - 62, 29):
+                if (dx + 2 * dy) % 5 != 0:
+                    hero.create_oval(dx, dy, dx + 2, dy + 2,
+                                     fill="#1A2B43", outline="")
+        cx, cy = w * 0.82, h * 0.71
+        for radius in (142, 204, 269):
+            hero.create_oval(cx - radius, cy - radius, cx + radius,
+                             cy + radius, outline=P["canvas_line"], width=1)
+        hero.create_arc(cx - 204, cy - 204, cx + 204, cy + 204,
+                        start=33, extent=46, outline=P["mint"], width=3, style="arc")
+        hero.create_oval(cx - 6, cy - 6, cx + 6, cy + 6,
+                         fill=P["mint"], outline="")
+        x = max(38, min(62, w * 0.1))
+        hero.create_rectangle(x, 44, x + 38, 82, fill=P["mint"], outline="")
+        hero.create_text(x + 19, 63, text="A", font=(FONT, 18, "bold"),
+                         fill=P["hero"], anchor="center")
+        hero.create_text(x + 51, 56, text="ACCESSLAB", anchor="w",
+                         font=(FONT, 14, "bold"), fill=P["hero_text"])
+        hero.create_text(x + 52, 76, text="IDENTITY  /  LOCAL SYSTEM", anchor="w",
+                         font=(FONT, 8, "bold"), fill=P["hero_muted"])
+        hero.create_line(x, 115, w - x, 115, fill=P["canvas_line"])
+        title_y = max(182, h * .30)
+        hero.create_text(x, title_y, text="YOUR SPACE.", anchor="nw",
+                         font=(FONT, 11, "bold"), fill=P["mint"])
+        size = 35 if w >= 440 else 30
+        hero.create_text(x - 2, title_y + 40,
+                         text="Privacy starts\nwith a sign in.", anchor="nw",
+                         font=(FONT, size, "bold"), fill=P["hero_text"],
+                         width=w - x - 24)
+        hero.create_text(x, title_y + 192,
+                         text="A private desktop workspace. Your credentials\nare verified locally and never leave this device.",
+                         font=(FONT, 10), fill=P["hero_muted"], anchor="nw",
+                         width=w - x - 36)
+        hero.create_line(x, h - 138, w - x, h - 138, fill=P["canvas_line"])
+        hero.create_oval(x, h - 104, x + 8, h - 96,
+                         fill=P["mint"], outline="")
+        hero.create_text(x + 18, h - 100, text="LOCAL FIRST", anchor="w",
+                         font=(FONT, 9, "bold"), fill=P["hero_text"])
+        hero.create_text(x, h - 75,
+                         text="SQLite   /   SCRYPT   /   NO CLOUD REQUIRED",
+                         font=(FONT, 8), fill=P["hero_muted"], anchor="w")
+        hero.create_text(w - x, h - 39, text="ACCESSLAB  —  2026",
+                         font=(FONT, 8), fill=P["hero_muted"], anchor="e")
 
-    def heading(card: tk.Frame, title: str, subtitle: str) -> None:
-        tk.Label(card, text=title, fg=C["white"], bg=C["panel"],
-                 font=("Arial", 19, "bold")).pack(anchor="w")
-        tk.Label(card, text=subtitle, fg=C["muted"], bg=C["panel"],
-                 wraplength=690, justify="left").pack(anchor="w", pady=(3, 17))
+    hero.bind("<Configure>", hero_draw)
 
-    def field(card: tk.Frame, title: str, secret: bool = False) -> tk.Entry:
-        tk.Label(card, text=title, fg=C["muted"], bg=C["panel"],
-                 font=("Arial", 10, "bold")).pack(anchor="w", pady=(8, 3))
-        entry = tk.Entry(card, bg=C["field"], fg=C["white"],
-                         insertbackground=C["white"], relief="flat", bd=0,
-                         font=("Arial", 13), show="•" if secret else "")
-        entry.pack(fill="x", ipady=9)
+    def lbl(parent: tk.Misc, text: str, size: int = 10, color: str = "text",
+            bold: bool = False, **kwargs: object) -> tk.Label:
+        return tk.Label(parent, text=text, bg=P["white"], fg=P.get(color, color),
+                        font=(FONT, size, "bold" if bold else "normal"),
+                        anchor="w", justify="left", **kwargs)
+
+    def round_rect(canvas: tk.Canvas, x1: int, y1: int, x2: int, y2: int,
+                   radius: int, fill: str, outline: str = "") -> None:
+        r = min(radius, int((y2 - y1) / 2), int((x2 - x1) / 2))
+        # Tk smooth polygon supports corners without extra imports/assets.
+        points = [x1 + r, y1, x2 - r, y1, x2, y1, x2, y1 + r,
+                  x2, y2 - r, x2, y2, x2 - r, y2, x1 + r, y2,
+                  x1, y2, x1, y2 - r, x1, y1 + r, x1, y1]
+        canvas.create_polygon(points, fill=fill, outline=outline,
+                              smooth=True, splinesteps=12)
+
+    class Action(tk.Canvas):
+        def __init__(self, parent: tk.Misc, text: str, command: object,
+                     kind: str = "primary", height: int = 48) -> None:
+            self.kind, self.label, self.handler, self.hover = kind, text, command, False
+            super().__init__(parent, height=height, width=350, bg=P["white"],
+                             highlightthickness=0, borderwidth=0, cursor="hand2",
+                             takefocus=True)
+            self.bind("<Configure>", self.paint)
+            self.bind("<Enter>", lambda _e: self.set_hover(True))
+            self.bind("<Leave>", lambda _e: self.set_hover(False))
+            self.bind("<Button-1>", lambda _e: self.invoke())
+            self.bind("<Return>", lambda _e: self.invoke())
+            self.bind("<space>", lambda _e: self.invoke())
+            self.bind("<FocusIn>", self.paint)
+            self.bind("<FocusOut>", self.paint)
+
+        def set_hover(self, state: bool) -> None:
+            self.hover = state
+            self.paint()
+
+        def invoke(self) -> None:
+            self.handler()
+
+        def paint(self, _event: object = None) -> None:
+            w, h = self.winfo_width(), self.winfo_height()
+            if w <= 5 or h <= 5:
+                return
+            self.delete("all")
+            if self.kind == "primary":
+                bg = P["mint_hover"] if self.hover else P["mint"]
+                fg = P["ink"]
+            elif self.kind == "dark":
+                bg = "#1E304C" if self.hover else P["button_dark"]
+                fg = P["white"]
+            else:
+                bg = "#F4F8FC" if self.hover else P["white"]
+                fg = P["text"]
+            round_rect(self, 1, 1, w - 1, h - 1, 11, bg,
+                       P["border"] if self.kind == "secondary" else "")
+            self.create_text(w / 2, h / 2, text=self.label,
+                             font=(FONT, 10, "bold"), fill=fg, anchor="center")
+            if self.focus_get() is self:
+                self.create_rectangle(4, 4, w - 5, h - 5, outline=P["mint_dark"])
+
+    def link(parent: tk.Misc, text: str, fn: object,
+             align: str = "w") -> tk.Label:
+        widget = lbl(parent, text, 10, "mint_dark", True, cursor="hand2")
+        widget.configure(anchor=align)
+        widget.bind("<Button-1>", lambda _e: fn())
+        widget.bind("<Enter>", lambda _e: widget.configure(fg="#0A9D7A"))
+        widget.bind("<Leave>", lambda _e: widget.configure(fg=P["mint_dark"]))
+        return widget
+
+    def field(parent: tk.Misc, title: str, secret: bool = False,
+              compact: bool = False) -> tk.Entry:
+        group = tk.Frame(parent, bg=P["white"])
+        group.pack(fill="x", pady=(0, 9 if compact else 17))
+        lbl(group, title, 9, "text", True).pack(fill="x", pady=(0, 7))
+        border = tk.Frame(group, bg=P["border"], padx=1, pady=1)
+        border.pack(fill="x")
+        inside = tk.Frame(border, bg=P["field"], height=50)
+        inside.pack(fill="x")
+        inside.pack_propagate(False)
+        entry = tk.Entry(inside, bd=0, relief="flat", bg=P["field"],
+                         fg=P["text"], insertbackground=P["text"],
+                         font=(FONT, 11), highlightthickness=0, show="•" if secret else "")
+        entry.pack(side="left", fill="both", expand=True, padx=(15, 7), pady=12)
         if secret:
-            visible = tk.BooleanVar(value=False)
-            tk.Checkbutton(card, text="Show password", variable=visible,
-                           command=lambda: entry.config(show="" if visible.get() else "•"),
-                           fg=C["muted"], bg=C["panel"], activebackground=C["panel"],
-                           activeforeground=C["white"], selectcolor=C["field"],
-                           relief="flat", bd=0).pack(anchor="w")
+            shown = tk.BooleanVar(value=False)
+            toggle = tk.Label(inside, text="SHOW", bg=P["field"],
+                              fg=P["mint_dark"], cursor="hand2",
+                              font=(FONT, 8, "bold"), padx=12)
+            toggle.pack(side="right")
+            def switch(_event: object = None) -> None:
+                shown.set(not shown.get())
+                entry.config(show="" if shown.get() else "•")
+                toggle.config(text="HIDE" if shown.get() else "SHOW")
+            toggle.bind("<Button-1>", switch)
+        entry.bind("<FocusIn>", lambda _e: border.configure(bg=P["mint_dark"]))
+        entry.bind("<FocusOut>", lambda _e: border.configure(bg=P["border"]))
         return entry
 
-    def button(card: tk.Frame, label: str, command: object, primary: bool = True) -> None:
-        bg = C["accent"] if primary else C["field"]
-        fg = C["bg"] if primary else C["white"]
-        tk.Button(card, text=label, command=command, bg=bg, fg=fg,
-                  activebackground="#8aefd4" if primary else C["line"],
-                  activeforeground=C["bg"] if primary else C["white"],
-                  relief="flat", bd=0, padx=16, pady=9, cursor="hand2",
-                  font=("Arial", 11, "bold")).pack(fill="x", pady=(10, 0))
+    # Header and footer remain static while the central card switches screens.
+    header = tk.Frame(content, bg=P["back"])
+    header.place(relx=1, x=-39, y=35, anchor="ne")
+    tk.Label(header, text="PYTHON  /  DESKTOP EDITION", bg=P["back"],
+             fg=P["muted"], font=(FONT, 9, "bold")).pack()
+    footer = tk.Frame(content, bg=P["back"])
+    footer.place(relx=.5, rely=1, y=-32, anchor="s")
+    tk.Label(footer, text="ENCRYPTED CREDENTIALS      •      OFFLINE BY DESIGN",
+             bg=P["back"], fg=P["muted"], font=(FONT, 8)).pack()
+    panel: Optional[tk.Frame] = None
 
-    def status(card: tk.Frame) -> tk.Label:
-        label = tk.Label(card, text="", bg=C["panel"], fg=C["red"],
-                         wraplength=690, anchor="w", justify="left")
-        label.pack(fill="x", pady=(10, 0))
-        return label
+    def screen(kicker: str, title: str, subtitle: str,
+               compact: bool = False) -> tk.Frame:
+        nonlocal panel
+        if panel is not None:
+            panel.destroy()
+        panel = tk.Frame(content, bg=P["white"], highlightthickness=1,
+                         highlightbackground=P["border"], highlightcolor=P["border"])
+        panel.place(relx=.5, rely=.48, anchor="center")
+        body = tk.Frame(panel, width=390, bg=P["white"])
+        body.pack(padx=42, pady=20 if compact else 32, fill="x")
+        body.pack_propagate(True)
+        lbl(body, kicker, 9, "mint_dark", True).pack(anchor="w", pady=(0, 10))
+        lbl(body, title, 24, "text", True).pack(anchor="w", pady=(0, 5))
+        lbl(body, subtitle, 10, "muted", wraplength=390).pack(anchor="w", pady=(0, 17 if compact else 29))
+        return body
 
-    def recovery_code_screen(code: str, message: str) -> None:
-        card = clear()
-        heading(card, "Save your recovery code", message)
-        tk.Label(card, text="This is displayed only once. Keep it private.",
-                 bg=C["panel"], fg=C["gold"]).pack(anchor="w", pady=(3, 12))
-        secret_code = tk.Entry(card, bg=C["field"], fg=C["accent"],
-                               insertbackground=C["accent"], relief="flat",
-                               font=("Consolas", 14), readonlybackground=C["field"])
-        secret_code.insert(0, code)
-        secret_code.config(state="readonly")
-        secret_code.pack(fill="x", ipady=12)
-        def copy_code() -> None:
-            root.clipboard_clear()
-            root.clipboard_append(code)
-            messagebox.showinfo("Copied", "Recovery code copied. Do not share it.")
-        button(card, "Copy recovery code", copy_code)
-        button(card, "I saved it — continue to login", login_screen, False)
+    def status(body: tk.Misc) -> tk.Label:
+        outcome = lbl(body, "", 9, "red", wraplength=390)
+        outcome.pack(fill="x", pady=(5, 10))
+        return outcome
+
+    def show_error(target: tk.Label, message: str) -> None:
+        target.config(text=message, fg=P["red"])
+
+    def primary(body: tk.Misc, text: str, fn: object,
+                kind: str = "primary", pady: tuple[int, int] = (8, 0)) -> Action:
+        control = Action(body, text, fn, kind)
+        control.pack(fill="x", pady=pady)
+        return control
 
     def login_screen() -> None:
         nonlocal active_user
         active_user = None
-        card = clear()
-        heading(card, "Welcome back", "Enter your User ID and password to verify your identity.")
-        username = field(card, "USER ID")
-        password = field(card, "PASSWORD", True)
-        outcome = status(card)
+        body = screen("01  /  SECURE ACCESS", "Welcome back.",
+                      "Enter your User ID and password to continue.")
+        username = field(body, "USER ID")
+        password = field(body, "PASSWORD", secret=True)
+        tools = tk.Frame(body, bg=P["white"])
+        tools.pack(fill="x", pady=(0, 4))
+        link(tools, "Forgot password?", recover_screen).pack(side="right")
+        outcome = status(body)
         def submit(_event: object = None) -> None:
             nonlocal active_user
             try:
@@ -449,97 +628,127 @@ def graphical_app(store: AuthStore) -> None:
                 password.delete(0, "end")
                 if result.success:
                     active_user = result.username
-                    messagebox.showinfo("Access granted", "Grant Access")
                     dashboard()
                 else:
-                    outcome.config(text="Wrong Credentials", fg=C["red"])
-            except Exception as exc:
-                outcome.config(text=f"Unable to authenticate: {exc}", fg=C["red"])
+                    show_error(outcome, "Wrong Credentials  —  please try again.")
+            except (AuthError, sqlite3.Error) as exc:
+                show_error(outcome, f"Unable to authenticate: {exc}")
         password.bind("<Return>", submit)
-        button(card, "Login  →", submit)
-        button(card, "Create a new account", register_screen, False)
-        button(card, "Use a recovery code", recover_screen, False)
+        username.bind("<Return>", lambda _e: password.focus_set())
+        primary(body, "Sign in   →", submit, pady=(6, 22))
+        lbl(body, "NEW TO ACCESSLAB?", 8, "muted", True).pack(anchor="center")
+        primary(body, "Create an account", register_screen, "secondary", (9, 0))
         username.focus_set()
 
     def register_screen() -> None:
-        card = clear()
-        heading(card, "Create an account", "No default credentials. Register your own account and keep its recovery code.")
-        username = field(card, "CHOOSE USER ID")
-        password = field(card, "PASSWORD (12+ CHARACTERS)", True)
-        confirm = field(card, "CONFIRM PASSWORD", True)
-        outcome = status(card)
+        body = screen("02  /  GET STARTED", "Create an account.",
+                      "One account, stored privately on this computer.")
+        username = field(body, "CHOOSE A USER ID")
+        password = field(body, "PASSWORD  •  AT LEAST 12 CHARACTERS", True)
+        confirmation = field(body, "CONFIRM PASSWORD", True)
+        outcome = status(body)
+        def submit() -> None:
+            try:
+                if password.get() != confirmation.get():
+                    raise AuthError("Passwords do not match.")
+                code = store.register(username.get().strip(), password.get())
+                recovery_code_screen(code, "Your account is ready.")
+            except (AuthError, sqlite3.Error) as exc:
+                show_error(outcome, str(exc))
+        confirmation.bind("<Return>", lambda _e: submit())
+        primary(body, "Create account   →", submit)
+        link(body, "←  Back to sign in", login_screen).pack(anchor="center", pady=(19, 0))
+        username.focus_set()
+
+    def recovery_code_screen(code: str, message: str) -> None:
+        body = screen("03  /  SAVE YOUR BACKUP", "Your recovery key.",
+                      f"{message} This code is shown once. Store it somewhere safe.")
+        lbl(body, "ONE-TIME RECOVERY CODE", 9, "text", True).pack(anchor="w", pady=(0, 9))
+        holder = tk.Frame(body, bg=P["field"], highlightbackground=P["border"],
+                          highlightthickness=1)
+        holder.pack(fill="x")
+        tk.Label(holder, text=code, bg=P["field"], fg=P["mint_dark"],
+                 font=(FONT_MONO, 11, "bold"), anchor="w",
+                 justify="left").pack(fill="x", padx=13, pady=17)
+        tk.Label(body, text="Keep this code private; anyone with it can reset your password.",
+                 bg=P["white"], fg=P["red"], font=(FONT, 9),
+                 wraplength=388, anchor="w", justify="left").pack(fill="x", pady=(16, 12))
+        def copy() -> None:
+            root.clipboard_clear()
+            root.clipboard_append(code)
+            root.update_idletasks()
+            messagebox.showinfo("Recovery key", "Code copied. Keep it somewhere safe.", parent=root)
+        primary(body, "Copy recovery code", copy)
+        primary(body, "I saved it  →  Sign in", login_screen, "secondary", (10, 0))
+
+    def recover_screen() -> None:
+        body = screen("04  /  ACCOUNT RECOVERY", "Reset your password.",
+                      "Provide the recovery code you saved during registration.", compact=True)
+        username = field(body, "USER ID", compact=True)
+        code = field(body, "RECOVERY CODE", True, compact=True)
+        password = field(body, "NEW PASSWORD", True, compact=True)
+        confirm = field(body, "CONFIRM NEW PASSWORD", True, compact=True)
+        outcome = status(body)
         def submit() -> None:
             try:
                 if password.get() != confirm.get():
                     raise AuthError("Passwords do not match.")
-                code = store.register(username.get().strip(), password.get())
-                recovery_code_screen(code, "Account created successfully.")
+                replacement = store.recover(username.get().strip(), code.get(), password.get())
+                recovery_code_screen(replacement, "Your password has been reset.")
             except (AuthError, sqlite3.Error) as exc:
-                outcome.config(text=str(exc))
-        button(card, "Register account", submit)
-        button(card, "← Back to login", login_screen, False)
-        username.focus_set()
-
-    def recover_screen() -> None:
-        card = clear()
-        heading(card, "Recover your account", "Use the private recovery code issued at registration. This rotates the code.")
-        username = field(card, "USER ID")
-        code = field(card, "RECOVERY CODE", True)
-        new_pass = field(card, "NEW PASSWORD", True)
-        confirm = field(card, "CONFIRM NEW PASSWORD", True)
-        outcome = status(card)
-        def submit() -> None:
-            try:
-                if new_pass.get() != confirm.get():
-                    raise AuthError("Passwords do not match.")
-                replacement = store.recover(username.get().strip(), code.get(), new_pass.get())
-                recovery_code_screen(replacement, "Password reset. Your old recovery code is now invalid.")
-            except (AuthError, sqlite3.Error) as exc:
-                outcome.config(text=str(exc))
-        button(card, "Reset password", submit)
-        button(card, "← Back to login", login_screen, False)
+                show_error(outcome, str(exc))
+        confirm.bind("<Return>", lambda _e: submit())
+        primary(body, "Reset password   →", submit)
+        link(body, "←  Back to sign in", login_screen).pack(anchor="center", pady=(17, 0))
         username.focus_set()
 
     def change_screen() -> None:
         if not active_user:
             login_screen()
             return
-        card = clear()
-        heading(card, "Change password", f"Authenticated user: {active_user}")
-        old_pass = field(card, "CURRENT PASSWORD", True)
-        new_pass = field(card, "NEW PASSWORD", True)
-        confirm = field(card, "CONFIRM NEW PASSWORD", True)
-        outcome = status(card)
+        body = screen("06  /  ACCOUNT SECURITY", "Change password.",
+                      f"Signed in as {active_user}. Use a new, unique passphrase.")
+        old = field(body, "CURRENT PASSWORD", True)
+        new = field(body, "NEW PASSWORD", True)
+        confirm = field(body, "CONFIRM NEW PASSWORD", True)
+        outcome = status(body)
         def submit() -> None:
             try:
-                if new_pass.get() != confirm.get():
+                if new.get() != confirm.get():
                     raise AuthError("Passwords do not match.")
-                store.change_password(active_user, old_pass.get(), new_pass.get())
-                messagebox.showinfo("Updated", "Password changed successfully.")
+                store.change_password(active_user, old.get(), new.get())
                 dashboard()
             except (AuthError, sqlite3.Error) as exc:
-                outcome.config(text=str(exc))
-        button(card, "Save new password", submit)
-        button(card, "← Back to dashboard", dashboard, False)
+                show_error(outcome, str(exc))
+        confirm.bind("<Return>", lambda _e: submit())
+        primary(body, "Update password   →", submit)
+        link(body, "←  Back to overview", dashboard).pack(anchor="center", pady=(17, 0))
+        old.focus_set()
 
     def dashboard() -> None:
         if not active_user:
             login_screen()
             return
-        card = clear()
-        heading(card, "Grant Access", f"Welcome, {active_user}. Your credentials were verified successfully.")
+        body = screen("05  /  AUTHENTICATED", "Grant Access ✓",
+                      f"You're signed in as {active_user}. Your credentials were verified.")
         info = store.profile(active_user)
-        for title, value in (("USER ID", info["username"]), ("ACCOUNT CREATED", info["created"]),
-                             ("LAST LOGIN (UTC)", info["last_login"] or "Not available")):
-            tk.Label(card, text=f"{title}     {value}", fg=C["white"], bg=C["panel"],
-                     font=("Arial", 11)).pack(anchor="w", pady=(2, 5))
-        tk.Label(card, text="RECENT SECURITY ACTIVITY", fg=C["accent"], bg=C["panel"],
-                 font=("Arial", 10, "bold")).pack(anchor="w", pady=(17, 5))
-        for action, when in store.activity(active_user, 5):
-            tk.Label(card, text=f"{when}   /   {action}", fg=C["muted"],
-                     bg=C["panel"], font=("Consolas", 9)).pack(anchor="w")
-        button(card, "Change password", change_screen)
-        button(card, "Log out", login_screen, False)
+        rows = (("USER ID", info["username"] or ""),
+                ("ACCOUNT CREATED", (info["created"] or "")[:19].replace("T", " ")),
+                ("LAST LOGIN (UTC)", (info["last_login"] or "Never")[:19].replace("T", " ")))
+        for label_text, value in rows:
+            section = tk.Frame(body, bg=P["field"], padx=14, pady=9)
+            section.pack(fill="x", pady=(0, 6))
+            tk.Label(section, text=label_text, bg=P["field"], fg=P["muted"],
+                     font=(FONT, 8, "bold")).pack(anchor="w")
+            tk.Label(section, text=value, bg=P["field"], fg=P["text"],
+                     font=(FONT, 10, "bold")).pack(anchor="w", pady=(3, 0))
+        lbl(body, "RECENT ACTIVITY", 9, "text", True).pack(anchor="w", pady=(14, 7))
+        records = store.activity(active_user, 4)
+        for action, when in records:
+            lbl(body, f"{action.replace('_', ' ').title()}     •     {when[:16].replace('T',' ')}",
+                9, "muted").pack(anchor="w", pady=(0, 3))
+        primary(body, "Change password", change_screen, "dark", (16, 0))
+        primary(body, "Sign out", login_screen, "secondary", (9, 0))
 
     root.protocol("WM_DELETE_WINDOW", root.destroy)
     login_screen()
