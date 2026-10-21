@@ -1,0 +1,50 @@
+name: Study-site continuity checks
+
+on:
+  pull_request:
+    paths:
+      - "app.js"
+      - "study-progress.js"
+      - "index.html"
+      - "style.css"
+      - "tests/**"
+      - ".github/workflows/study-continuity.yml"
+  push:
+    branches: [main]
+    paths:
+      - "app.js"
+      - "study-progress.js"
+      - "index.html"
+      - "tests/**"
+
+permissions:
+  contents: read
+
+jobs:
+  learning-continuity:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Validate browser scripts
+        run: |
+          node --check app.js
+          node --check data.js
+          node --check study-progress.js
+      - name: Test session restoration
+        run: node --test tests/study-progress.test.cjs
+      - name: Verify accessible UI wiring
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          html = Path("index.html").read_text()
+          code = Path("app.js").read_text()
+          assert html.index('src="study-progress.js"') < html.index('src="app.js"')
+          assert 'id="resumeBtn"' in html and 'type="button" id="resumeBtn"' in html
+          assert 'id="lessonTitle" tabindex="-1"' in html
+          assert 'StudyProgress.restore' in code and 'StudyProgress.save' in code
+          print("Resume control and storage wiring present")
+          PY
