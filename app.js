@@ -4,7 +4,10 @@
 const $=id=>document.getElementById(id);
 const lessons=window.LESSONS||[];
 const LSKEY="control-lecture-two-progress-v1";
-let selected=0,step=0,showAll=false,selectedAnswer=-1,finished=new Set();
+let studyStorage=null;
+try { studyStorage=window.localStorage; } catch (_) {}
+const restoredLocation=window.StudyProgress.restore(studyStorage,lessons);
+let selected=restoredLocation.index,step=restoredLocation.step,showAll=false,selectedAnswer=-1,finished=new Set();
 try{finished=new Set(JSON.parse(localStorage.getItem(LSKEY)||"[]"))}catch(_){}
 const fmt=n=>n.toFixed(2).replace(/\.?0+$/,"");
 const svgTag=(d,cl="wire")=>'<path class="'+cl+'" d="'+d+'"/>';
@@ -69,6 +72,16 @@ function typeset(el){if(window.MathJax&&MathJax.typesetPromise){MathJax.typesetC
 const makeMath=s=>'<div class="math-display">\\['+s+'\\]</div>';
 function save(){try{localStorage.setItem(LSKEY,JSON.stringify([...finished]))}catch(_){}}
 function progress(){const n=finished.size;$("doneCount").textContent=n;$("sideProgressText").textContent=n+" من "+lessons.length+" مسائل";$("progressBar").style.width=(n/lessons.length*100)+"%";const r=$("doneButton");if(r){r.textContent=finished.has(lessons[selected].id)?"✓ أنهيت هذه المسألة":"علّم المسألة كمكتملة";r.classList.toggle("light",finished.has(lessons[selected].id))}}
+function rememberPosition(){
+ const current=lessons[selected];
+ if(current)window.StudyProgress.save(studyStorage,current.id,step);
+ const btn=$("resumeBtn"),info=$("resumeInfo");
+ if(!btn||!info||!current)return;
+ const useful=selected!==0||step!==0;
+ btn.hidden=!useful;
+ info.textContent=useful?"تُحفظ آخر مسألة وخطوة على جهازك فقط.":"";
+ if(useful)btn.textContent="استكمال "+current.title+" — الخطوة "+(step+1);
+}
 function navBuild(){
  const nav=$("lessonNav");nav.innerHTML="";let last="";
  lessons.forEach((l,i)=>{if(l.section!==last){last=l.section;let h=document.createElement("div");h.className="side-label";h.textContent=last==="electric"?"الدوائر الكهربائية — 6":last==="mechanical"?"الأنظمة الميكانيكية — 5":"الواجبات المحلولة — 5";nav.append(h)}
@@ -95,6 +108,7 @@ function renderStep(){
  $("miniSteps").querySelectorAll("button").forEach(b=>b.onclick=()=>{step=Number(b.dataset.step);showAll=false;renderStep()});
  const visible=showAll||step===l.steps.length-1;$("finalBox").hidden=!visible;
  $("finalMath").innerHTML=makeMath(l.answer);
+ rememberPosition();
  typeset($("stepsHost"));if(visible)typeset($("finalMath"));
 }
 function renderQuiz(){
@@ -159,6 +173,7 @@ function initLaw(){
 function closeMenu(){$("sidebar").classList.remove("open");$("backdrop").classList.remove("visible")}
 function ready(){
  navBuild();renderLesson();initLaw();
+ $("resumeBtn").onclick=()=>{$("lessonTitle").focus({preventScroll:true});$("lessonHost").scrollIntoView({behavior:"smooth",block:"start"})};
  $("nextStep").onclick=()=>{if(step<lessons[selected].steps.length-1){step++;renderStep()}};
  $("prevStep").onclick=()=>{if(step>0){step--;renderStep()}};
  $("allSteps").onclick=()=>{showAll=!showAll;renderStep()};
@@ -169,7 +184,7 @@ function ready(){
  $("menuBtn").onclick=()=>{$("sidebar").classList.add("open");$("backdrop").classList.add("visible")};
  $("backdrop").onclick=closeMenu;
  $("sizeBtn").onclick=()=>document.body.classList.toggle("large-text");
- document.addEventListener("keydown",e=>{if(e.target.matches("input,textarea"))return;if(e.key==="Escape")closeMenu();if(e.key==="ArrowLeft")$("nextStep").click();if(e.key==="ArrowRight")$("prevStep").click()});
+ document.addEventListener("keydown",e=>{if(e.target.matches("input,textarea,select,button,[contenteditable=true]"))return;if(e.key==="Escape")closeMenu();if(e.key==="ArrowLeft")$("nextStep").click();if(e.key==="ArrowRight")$("prevStep").click()});
 }
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",ready);else ready();
 })();
