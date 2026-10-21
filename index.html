@@ -12,6 +12,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],proc
 </script>
 <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
 <script defer src="data.js"></script>
+<script defer src="study-progress.js"></script>
 <script defer src="app.js"></script>
 </head>
 <body>
@@ -46,6 +47,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],proc
   <div class="eyebrow">CONTROL THEORY • LECTURE TWO • 2026/2027</div>
   <h1>افهم المسألة من رسمها،<br>ثم اكتب المعادلة.</h1>
   <p>سنحدد الدخل والخرج أولاً، ثم نعرف من أين جاءت كل معادلة، ونحلّها بالتسلسل. الهدف أن تستطيع إعادة الحل بنفسك حتى لو تغيّر شكل الرسم.</p>
+  <div class="resume-row"><button type="button" id="resumeBtn" class="btn primary" hidden>استكمال آخر مسألة</button><span id="resumeInfo" role="status" aria-live="polite"></span></div>
   <div class="hero-stats">
    <span><b>11</b> مثالاً من المحاضرة</span>
    <span><b>05</b> واجبات محلولة</span>
@@ -73,7 +75,7 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],proc
  <section class="content-section" id="lessonHost" aria-labelledby="lessonTitle">
   <div class="block-title"><h2>المسألة الحالية</h2><span class="section-counter" id="stepCount"></span></div>
   <div class="lesson-header">
-   <div><div class="meta"><span class="group" id="currentCategory">الدوائر الكهربائية</span><span id="pageNum"></span><span>المعادلات بشرط قيم ابتدائية صفرية</span></div><h2 id="lessonTitle">مثال 2.1</h2></div>
+   <div><div class="meta"><span class="group" id="currentCategory">الدوائر الكهربائية</span><span id="pageNum"></span><span>المعادلات بشرط قيم ابتدائية صفرية</span></div><h2 id="lessonTitle" tabindex="-1">مثال 2.1</h2></div>
    <button type="button" class="btn" id="doneButton">علّم المسألة كمكتملة</button>
   </div>
   <div class="learning-area">
